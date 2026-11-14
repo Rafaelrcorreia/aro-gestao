@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -40,6 +41,13 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> corpo = criarCorpoBasico(HttpStatus.BAD_REQUEST, "Dados invalidos");
         corpo.put("erros", erros);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(corpo);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> tratarParametroInvalido(MethodArgumentTypeMismatchException ex) {
+        Map<String, Object> corpo = criarCorpoBasico(HttpStatus.BAD_REQUEST,
+                "Valor invalido para o parametro '" + ex.getName() + "'");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(corpo);
     }
 

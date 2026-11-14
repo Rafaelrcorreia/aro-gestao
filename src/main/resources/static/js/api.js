@@ -5,6 +5,7 @@ const URL_BASE_CALENDARIO = '/api/calendario';
 const URL_BASE_DASHBOARD = '/api/dashboard';
 const URL_BASE_COMPROMISSOS = '/api/compromissos';
 const URL_BASE_IMOVEIS = '/api/imoveis';
+const URL_BASE_PROCESSOS = '/api/processos';
 
 async function requisitar(url, opcoes) {
     let resposta;
@@ -277,6 +278,58 @@ function atualizarImovel(id, dadosImovel) {
 
 function excluirImovel(id) {
     return requisitar(URL_BASE_IMOVEIS + '/' + id, {
+        method: 'DELETE'
+    });
+}
+
+// Todos os filtros são opcionais
+function listarProcessos(clienteId, status, busca) {
+    const parametros = new URLSearchParams();
+
+    if (clienteId) {
+        parametros.set('clienteId', clienteId);
+    }
+    if (status) {
+        parametros.set('status', status);
+    }
+    if (busca && busca.trim() !== '') {
+        parametros.set('busca', busca.trim());
+    }
+
+    const consulta = parametros.toString();
+    return requisitar(URL_BASE_PROCESSOS + (consulta ? '?' + consulta : ''), {
+        method: 'GET'
+    });
+}
+
+function buscarProcesso(id) {
+    return requisitar(URL_BASE_PROCESSOS + '/' + id, {
+        method: 'GET'
+    });
+}
+
+function criarProcesso(dadosProcesso) {
+    return requisitar(URL_BASE_PROCESSOS, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosProcesso)
+    });
+}
+
+function atualizarProcesso(id, dadosProcesso) {
+    return requisitar(URL_BASE_PROCESSOS + '/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosProcesso)
+    });
+}
+
+function excluirProcesso(id) {
+    return requisitar(URL_BASE_PROCESSOS + '/' + id, {
         method: 'DELETE'
     });
 }

@@ -4,9 +4,11 @@ import com.aro.aro_gestao.dto.ImovelRequestDTO;
 import com.aro.aro_gestao.dto.ImovelResponseDTO;
 import com.aro.aro_gestao.entity.Cliente;
 import com.aro.aro_gestao.entity.Imovel;
+import com.aro.aro_gestao.exception.BusinessException;
 import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,13 @@ public class ImovelService {
 
     private final ImovelRepository imovelRepository;
     private final ClienteRepository clienteRepository;
+    private final ProcessoRepository processoRepository;
 
-    public ImovelService(ImovelRepository imovelRepository, ClienteRepository clienteRepository) {
+    public ImovelService(ImovelRepository imovelRepository, ClienteRepository clienteRepository,
+                         ProcessoRepository processoRepository) {
         this.imovelRepository = imovelRepository;
         this.clienteRepository = clienteRepository;
+        this.processoRepository = processoRepository;
     }
 
     @Transactional
@@ -51,13 +56,24 @@ public class ImovelService {
     @Transactional
     public ImovelResponseDTO atualizar(Long id, ImovelRequestDTO dto) {
         Imovel imovel = buscarImovelOuFalhar(id);
+        boolean trocouCliente = !imovel.getCliente().getId().equals(dto.getClienteId());
+        if (trocouCliente && processoRepository.existsByImovelId(id)) {
+            // Os processos do imovel ficariam ligados a um cliente que nao e mais o dono
+            throw new BusinessException("Nao e possivel trocar o cliente deste imovel porque ele possui "
+                    + "processos vinculados ao cliente atual.");
+        }
         copiarDadosParaEntidade(dto, imovel);
         return new ImovelResponseDTO(imovelRepository.save(imovel));
     }
 
     @Transactional
     public void excluir(Long id) {
-        imovelRepository.delete(buscarImovelOuFalhar(id));
+        Imovel imovel = buscarImovelOuFalhar(id);
+        if (processoRepository.existsByImovelId(id)) {
+            throw new BusinessException("Nao e possivel excluir o imovel porque ele possui processos vinculados. "
+                    + "Exclua os processos ou retire o imovel deles antes.");
+        }
+        imovelRepository.delete(imovel);
     }
 
     private Imovel buscarImovelOuFalhar(Long id) {

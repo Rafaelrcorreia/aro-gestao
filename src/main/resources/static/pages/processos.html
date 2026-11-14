@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processos — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item ativo">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Processos</h1>
+            <button type="button" id="btnNovoProcesso" class="botao botao-primario">Novo processo</button>
+        </header>
+
+        <section class="barra-ferramentas">
+            <div class="campo-pesquisa">
+                <input type="search" id="inputPesquisa" placeholder="Pesquisar por protocolo, órgão, cliente ou imóvel" aria-label="Pesquisar processos">
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroCliente">Cliente</label>
+                <select id="selectFiltroCliente">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroStatus">Status</label>
+                <select id="selectFiltroStatus">
+                    <option value="">Todos</option>
+                    <option value="EM_ELABORACAO">Em elaboração</option>
+                    <option value="PROTOCOLADO">Protocolado</option>
+                    <option value="EM_ANALISE">Em análise</option>
+                    <option value="EXIGENCIA">Exigência</option>
+                    <option value="DEFERIDO">Deferido</option>
+                    <option value="INDEFERIDO">Indeferido</option>
+                    <option value="ARQUIVADO">Arquivado</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando processos...</span>
+        </div>
+
+        <section class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaProcessos">
+                <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Cliente / Imóvel</th>
+                    <th>Protocolo / Órgão</th>
+                    <th>Abertura</th>
+                    <th>Prazo previsto</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaProcessos"></tbody>
+            </table>
+
+            <div id="estadoVazioProcessos" class="estado-vazio oculto">
+                <p>Nenhum processo encontrado.</p>
+                <p>Clique em "Novo processo" para cadastrar o primeiro.</p>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioProcesso" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Novo processo</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectTipo">Tipo *</label>
+                    <select id="selectTipo" required>
+                        <option value="">Selecione</option>
+                        <option value="GEORREFERENCIAMENTO">Georreferenciamento</option>
+                        <option value="CAR">CAR</option>
+                        <option value="CCIR">CCIR</option>
+                        <option value="ITR">ITR</option>
+                        <option value="RETIFICACAO_MATRICULA">Retificação de matrícula</option>
+                        <option value="REGULARIZACAO_FUNDIARIA">Regularização fundiária</option>
+                        <option value="USUCAPIAO">Usucapião</option>
+                        <option value="LICENCIAMENTO_AMBIENTAL">Licenciamento ambiental</option>
+                        <option value="OUTORGA_AGUA">Outorga de água</option>
+                        <option value="OUTRO">Outro</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroTipo"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectStatus">Status *</label>
+                    <select id="selectStatus" required>
+                        <option value="EM_ELABORACAO">Em elaboração</option>
+                        <option value="PROTOCOLADO">Protocolado</option>
+                        <option value="EM_ANALISE">Em análise</option>
+                        <option value="EXIGENCIA">Exigência</option>
+                        <option value="DEFERIDO">Deferido</option>
+                        <option value="INDEFERIDO">Indeferido</option>
+                        <option value="ARQUIVADO">Arquivado</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroStatus"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectCliente">Cliente *</label>
+                <select id="selectCliente" required>
+                    <option value="">Selecione</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroClienteId"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectImovel">Imóvel</label>
+                <select id="selectImovel">
+                    <option value="">Sem imóvel</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroImovelId"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputNumeroProtocolo">Nº do protocolo</label>
+                    <input type="text" id="inputNumeroProtocolo" maxlength="60">
+                    <span class="mensagem-erro-campo" id="erroNumeroProtocolo"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputOrgao">Órgão</label>
+                    <input type="text" id="inputOrgao" maxlength="100" placeholder="Ex.: INCRA, SEMA, Cartório" list="sugestoesOrgao">
+                    <datalist id="sugestoesOrgao">
+                        <option value="INCRA"></option>
+                        <option value="SEMA"></option>
+                        <option value="INEMA"></option>
+                        <option value="Receita Federal"></option>
+                        <option value="Cartório de Registro de Imóveis"></option>
+                    </datalist>
+                    <span class="mensagem-erro-campo" id="erroOrgao"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataAbertura">Abertura *</label>
+                    <input type="date" id="inputDataAbertura" required>
+                    <span class="mensagem-erro-campo" id="erroDataAbertura"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputDataProtocolo">Protocolado em</label>
+                    <input type="date" id="inputDataProtocolo">
+                    <span class="mensagem-erro-campo" id="erroDataProtocolo"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputPrazoPrevisto">Prazo previsto</label>
+                    <input type="date" id="inputPrazoPrevisto">
+                    <span class="mensagem-erro-campo" id="erroPrazoPrevisto"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputDataConclusao">Concluído em</label>
+                    <input type="date" id="inputDataConclusao">
+                    <span class="mensagem-erro-campo" id="erroDataConclusao"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaDescricao">Descrição / andamento</label>
+                <textarea id="textareaDescricao" maxlength="2000" rows="4"></textarea>
+                <span class="mensagem-erro-campo" id="erroDescricao"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarProcesso" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusao" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusao" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusao"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusao" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusao" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/processos.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

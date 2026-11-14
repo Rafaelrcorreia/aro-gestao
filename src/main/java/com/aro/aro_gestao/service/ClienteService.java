@@ -9,6 +9,7 @@ import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +26,20 @@ public class ClienteService {
     private final TarefaRepository tarefaRepository;
     private final CompromissoRepository compromissoRepository;
     private final ImovelRepository imovelRepository;
+    private final ProcessoRepository processoRepository;
 
     public ClienteService(ClienteRepository clienteRepository,
                           AtendimentoRepository atendimentoRepository,
                           TarefaRepository tarefaRepository,
                           CompromissoRepository compromissoRepository,
-                          ImovelRepository imovelRepository) {
+                          ImovelRepository imovelRepository,
+                          ProcessoRepository processoRepository) {
         this.clienteRepository = clienteRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.tarefaRepository = tarefaRepository;
         this.compromissoRepository = compromissoRepository;
         this.imovelRepository = imovelRepository;
+        this.processoRepository = processoRepository;
     }
 
     public ClienteResponseDTO criar(ClienteRequestDTO dto) {
@@ -99,6 +103,9 @@ public class ClienteService {
         }
         if (imovelRepository.existsByClienteId(clienteId)) {
             vinculos.add("imoveis");
+        }
+        if (processoRepository.existsByClienteId(clienteId)) {
+            vinculos.add("processos");
         }
         if (!vinculos.isEmpty()) {
             throw new BusinessException("Nao e possivel excluir o cliente porque ele possui "

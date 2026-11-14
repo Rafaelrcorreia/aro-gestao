@@ -11,6 +11,7 @@ import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,9 @@ class ClienteServiceTest {
 
     @Mock
     private ImovelRepository imovelRepository;
+
+    @Mock
+    private ProcessoRepository processoRepository;
 
     @InjectMocks
     private ClienteService clienteService;
@@ -134,10 +138,11 @@ class ClienteServiceTest {
         when(tarefaRepository.existsByClienteId(1L)).thenReturn(true);
         when(compromissoRepository.existsByClienteId(1L)).thenReturn(true);
         when(imovelRepository.existsByClienteId(1L)).thenReturn(true);
+        when(processoRepository.existsByClienteId(1L)).thenReturn(true);
 
         BusinessException ex = assertThrows(BusinessException.class, () -> clienteService.excluir(1L));
 
-        assertTrue(ex.getMessage().contains("tarefas, compromissos, imoveis"));
+        assertTrue(ex.getMessage().contains("tarefas, compromissos, imoveis, processos"));
         verify(clienteRepository, never()).delete(any(Cliente.class));
     }
 }
