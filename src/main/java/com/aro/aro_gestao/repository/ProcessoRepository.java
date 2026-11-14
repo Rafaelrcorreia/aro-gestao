@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface ProcessoRepository extends JpaRepository<Processo, Long> {
@@ -14,6 +16,17 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
     boolean existsByClienteId(Long clienteId);
 
     boolean existsByImovelId(Long imovelId);
+
+    @EntityGraph(attributePaths = {"cliente", "imovel"})
+    List<Processo> findByPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(LocalDate inicio, LocalDate fim);
+
+    @EntityGraph(attributePaths = {"cliente", "imovel"})
+    List<Processo> findByClienteIdAndPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(
+            Long clienteId, LocalDate inicio, LocalDate fim);
+
+    long countByStatusNotIn(Collection<StatusProcesso> status);
+
+    long countByStatusNotInAndPrazoPrevistoBefore(Collection<StatusProcesso> status, LocalDate data);
 
     // Todos os filtros sao opcionais: quando vierem nulos, sao ignorados.
     // Mais recentes primeiro.

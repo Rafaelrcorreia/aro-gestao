@@ -5,12 +5,14 @@ import com.aro.aro_gestao.dto.EventoCalendarioResponseDTO;
 import com.aro.aro_gestao.entity.Atendimento;
 import com.aro.aro_gestao.entity.Cliente;
 import com.aro.aro_gestao.entity.Compromisso;
+import com.aro.aro_gestao.entity.Processo;
 import com.aro.aro_gestao.entity.Tarefa;
 import com.aro.aro_gestao.exception.BusinessException;
 import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,15 +29,18 @@ public class CalendarioService {
     private final AtendimentoRepository atendimentoRepository;
     private final ClienteRepository clienteRepository;
     private final CompromissoRepository compromissoRepository;
+    private final ProcessoRepository processoRepository;
 
     public CalendarioService(TarefaRepository tarefaRepository,
                              AtendimentoRepository atendimentoRepository,
                              ClienteRepository clienteRepository,
-                             CompromissoRepository compromissoRepository) {
+                             CompromissoRepository compromissoRepository,
+                             ProcessoRepository processoRepository) {
         this.tarefaRepository = tarefaRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.clienteRepository = clienteRepository;
         this.compromissoRepository = compromissoRepository;
+        this.processoRepository = processoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,6 +58,7 @@ public class CalendarioService {
         List<Tarefa> tarefas;
         List<Atendimento> atendimentos;
         List<Compromisso> compromissos;
+        List<Processo> processos;
         if (clienteId == null) {
             tarefas = tarefaRepository.findByPrazoBetweenOrderByPrazoAscIdAsc(
                     periodo.atDay(1), periodo.atEndOfMonth());
@@ -60,12 +66,16 @@ public class CalendarioService {
                     periodo.atDay(1), periodo.atEndOfMonth());
             compromissos = compromissoRepository.findByDataBetweenOrderByDataAscIdAsc(
                     periodo.atDay(1), periodo.atEndOfMonth());
+            processos = processoRepository.findByPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(
+                    periodo.atDay(1), periodo.atEndOfMonth());
         } else {
             tarefas = tarefaRepository.findByClienteIdAndPrazoBetweenOrderByPrazoAscIdAsc(
                     clienteId, periodo.atDay(1), periodo.atEndOfMonth());
             atendimentos = atendimentoRepository.findByClienteIdAndProximoContatoBetweenOrderByProximoContatoAscIdAsc(
                     clienteId, periodo.atDay(1), periodo.atEndOfMonth());
             compromissos = compromissoRepository.findByClienteIdAndDataBetweenOrderByDataAscIdAsc(
+                    clienteId, periodo.atDay(1), periodo.atEndOfMonth());
+            processos = processoRepository.findByClienteIdAndPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(
                     clienteId, periodo.atDay(1), periodo.atEndOfMonth());
         }
 
@@ -91,6 +101,17 @@ public class CalendarioService {
                     cliente == null ? null : cliente.getId(),
                     cliente == null ? null : cliente.getNomeCompleto(),
                     null, null));
+        }
+        for (Processo processo : processos) {
+            Cliente cliente = processo.getCliente();
+            // Ex.: "Georreferenciamento - Fazenda Boa Vista"
+            String titulo = processo.getTipo().getRotulo();
+            if (processo.getImovel() != null) {
+                titulo += " - " + processo.getImovel().getDenominacao();
+            }
+            eventos.add(new EventoCalendarioResponseDTO(
+                    "PROCESSO", processo.getId(), processo.getPrazoPrevisto(), null, titulo,
+                    cliente.getId(), cliente.getNomeCompleto(), null, null, processo.getStatus()));
         }
         eventos.sort(Comparator.comparing(EventoCalendarioResponseDTO::getData)
                 .thenComparing(EventoCalendarioResponseDTO::getTipo)

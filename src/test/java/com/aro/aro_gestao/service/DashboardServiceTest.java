@@ -4,10 +4,12 @@ import com.aro.aro_gestao.dto.DashboardResponseDTO;
 import com.aro.aro_gestao.entity.Atendimento;
 import com.aro.aro_gestao.entity.Cliente;
 import com.aro.aro_gestao.entity.StatusCliente;
+import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
 import com.aro.aro_gestao.entity.Tarefa;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,9 @@ class DashboardServiceTest {
     @Mock
     private AtendimentoRepository atendimentoRepository;
 
+    @Mock
+    private ProcessoRepository processoRepository;
+
     @InjectMocks
     private DashboardService dashboardService;
 
@@ -58,6 +63,9 @@ class DashboardServiceTest {
                 eq(StatusTarefa.CONCLUIDA), any(LocalDate.class))).thenReturn(6L);
         when(tarefaRepository.countByStatusNotAndPrazoBefore(
                 eq(StatusTarefa.CONCLUIDA), any(LocalDate.class))).thenReturn(2L);
+        when(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS)).thenReturn(5L);
+        when(processoRepository.countByStatusNotInAndPrazoPrevistoBefore(
+                eq(StatusProcesso.FINALIZADOS), any(LocalDate.class))).thenReturn(1L);
 
         LocalDate antes = LocalDate.now();
         DashboardResponseDTO resultado = dashboardService.buscarResumo();
@@ -66,6 +74,8 @@ class DashboardServiceTest {
         assertEquals(8L, resultado.getClientesAtivos());
         assertEquals(6L, resultado.getTarefasPendentes());
         assertEquals(2L, resultado.getTarefasAtrasadas());
+        assertEquals(5L, resultado.getProcessosEmAndamento());
+        assertEquals(1L, resultado.getProcessosAtrasados());
         assertTrue(!resultado.getDataReferencia().isBefore(antes)
                 && !resultado.getDataReferencia().isAfter(depois));
         verify(tarefaRepository).countByStatusNotAndPrazoBefore(

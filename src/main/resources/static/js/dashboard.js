@@ -43,6 +43,10 @@ function preencherCartoes(resumo) {
     document.getElementById('valorClientesAtivos').textContent = resumo.clientesAtivos;
     document.getElementById('valorTarefasPendentes').textContent = resumo.tarefasPendentes;
     document.getElementById('valorTarefasAtrasadas').textContent = resumo.tarefasAtrasadas;
+    document.getElementById('valorProcessosEmAndamento').textContent = resumo.processosEmAndamento;
+    document.getElementById('valorProcessosAtrasados').textContent = resumo.processosAtrasados;
+    document.getElementById('cartaoProcessosAtrasados')
+        .classList.toggle('cartao-alerta', resumo.processosAtrasados > 0);
 
     // O cartão de atrasadas fica vermelho só quando existe alguma tarefa atrasada
     document.getElementById('cartaoTarefasAtrasadas')

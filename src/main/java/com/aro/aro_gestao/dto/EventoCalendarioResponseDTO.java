@@ -1,6 +1,7 @@
 package com.aro.aro_gestao.dto;
 
 import com.aro.aro_gestao.entity.Prioridade;
+import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,6 +17,7 @@ public class EventoCalendarioResponseDTO {
     private final String nomeCliente;
     private final StatusTarefa statusTarefa;
     private final Prioridade prioridade;
+    private final StatusProcesso statusProcesso;
 
     // Usado por tarefas e retornos, que nao tem hora
     public EventoCalendarioResponseDTO(String tipo, Long origemId, LocalDate data,
@@ -27,6 +29,14 @@ public class EventoCalendarioResponseDTO {
     public EventoCalendarioResponseDTO(String tipo, Long origemId, LocalDate data, LocalTime hora,
                                        String titulo, Long clienteId, String nomeCliente,
                                        StatusTarefa statusTarefa, Prioridade prioridade) {
+        this(tipo, origemId, data, hora, titulo, clienteId, nomeCliente, statusTarefa, prioridade, null);
+    }
+
+    // Usado pelos prazos de processos
+    public EventoCalendarioResponseDTO(String tipo, Long origemId, LocalDate data, LocalTime hora,
+                                       String titulo, Long clienteId, String nomeCliente,
+                                       StatusTarefa statusTarefa, Prioridade prioridade,
+                                       StatusProcesso statusProcesso) {
         this.id = tipo + ":" + origemId;
         this.tipo = tipo;
         this.origemId = origemId;
@@ -37,6 +47,7 @@ public class EventoCalendarioResponseDTO {
         this.nomeCliente = nomeCliente;
         this.statusTarefa = statusTarefa;
         this.prioridade = prioridade;
+        this.statusProcesso = statusProcesso;
     }
 
     public String getId() { return id; }
@@ -49,4 +60,5 @@ public class EventoCalendarioResponseDTO {
     public String getNomeCliente() { return nomeCliente; }
     public StatusTarefa getStatusTarefa() { return statusTarefa; }
     public Prioridade getPrioridade() { return prioridade; }
+    public StatusProcesso getStatusProcesso() { return statusProcesso; }
 }

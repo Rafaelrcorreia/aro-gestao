@@ -10,6 +10,8 @@ public class DashboardResponseDTO {
     private long clientesAtivos;
     private long tarefasPendentes;
     private long tarefasAtrasadas;
+    private long processosEmAndamento;
+    private long processosAtrasados;
     private List<TarefaResponseDTO> proximosPrazos = new ArrayList<>();
     private List<AtendimentoResponseDTO> ultimosAtendimentos = new ArrayList<>();
 
@@ -46,6 +48,22 @@ public class DashboardResponseDTO {
 
     public void setTarefasAtrasadas(long tarefasAtrasadas) {
         this.tarefasAtrasadas = tarefasAtrasadas;
+    }
+
+    public long getProcessosEmAndamento() {
+        return processosEmAndamento;
+    }
+
+    public void setProcessosEmAndamento(long processosEmAndamento) {
+        this.processosEmAndamento = processosEmAndamento;
+    }
+
+    public long getProcessosAtrasados() {
+        return processosAtrasados;
+    }
+
+    public void setProcessosAtrasados(long processosAtrasados) {
+        this.processosAtrasados = processosAtrasados;
     }
 
     public List<TarefaResponseDTO> getProximosPrazos() {

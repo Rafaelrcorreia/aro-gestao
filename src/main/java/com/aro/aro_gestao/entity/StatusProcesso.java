@@ -11,8 +11,12 @@ public enum StatusProcesso {
     INDEFERIDO,
     ARQUIVADO;
 
+    // Status que encerram o processo
+    public static final java.util.Set<StatusProcesso> FINALIZADOS =
+            java.util.Collections.unmodifiableSet(java.util.EnumSet.of(DEFERIDO, INDEFERIDO, ARQUIVADO));
+
     // Processos finalizados nao contam como "em andamento"
     public boolean isFinalizado() {
-        return this == DEFERIDO || this == INDEFERIDO || this == ARQUIVADO;
+        return FINALIZADOS.contains(this);
     }
 }

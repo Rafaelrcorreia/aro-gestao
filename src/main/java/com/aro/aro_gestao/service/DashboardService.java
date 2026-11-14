@@ -4,9 +4,11 @@ import com.aro.aro_gestao.dto.AtendimentoResponseDTO;
 import com.aro.aro_gestao.dto.DashboardResponseDTO;
 import com.aro.aro_gestao.dto.TarefaResponseDTO;
 import com.aro.aro_gestao.entity.StatusCliente;
+import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +21,16 @@ public class DashboardService {
     private final ClienteRepository clienteRepository;
     private final TarefaRepository tarefaRepository;
     private final AtendimentoRepository atendimentoRepository;
+    private final ProcessoRepository processoRepository;
 
     public DashboardService(ClienteRepository clienteRepository,
                             TarefaRepository tarefaRepository,
-                            AtendimentoRepository atendimentoRepository) {
+                            AtendimentoRepository atendimentoRepository,
+                            ProcessoRepository processoRepository) {
         this.clienteRepository = clienteRepository;
         this.tarefaRepository = tarefaRepository;
         this.atendimentoRepository = atendimentoRepository;
+        this.processoRepository = processoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -41,6 +46,12 @@ public class DashboardService {
                 StatusTarefa.CONCLUIDA, hoje));
         resumo.setTarefasAtrasadas(tarefaRepository.countByStatusNotAndPrazoBefore(
                 StatusTarefa.CONCLUIDA, hoje));
+
+        // Em andamento = nao deferido, indeferido nem arquivado.
+        // Atrasados = em andamento com prazo previsto antes de hoje (subconjunto dos em andamento).
+        resumo.setProcessosEmAndamento(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS));
+        resumo.setProcessosAtrasados(processoRepository.countByStatusNotInAndPrazoPrevistoBefore(
+                StatusProcesso.FINALIZADOS, hoje));
 
         resumo.setProximosPrazos(tarefaRepository
                 .findTop5ByStatusNotAndPrazoGreaterThanEqualOrderByPrazoAscIdAsc(

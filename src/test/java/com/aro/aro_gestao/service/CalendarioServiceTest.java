@@ -4,6 +4,10 @@ import com.aro.aro_gestao.dto.CalendarioResponseDTO;
 import com.aro.aro_gestao.entity.Atendimento;
 import com.aro.aro_gestao.entity.Cliente;
 import com.aro.aro_gestao.entity.Compromisso;
+import com.aro.aro_gestao.entity.Imovel;
+import com.aro.aro_gestao.entity.Processo;
+import com.aro.aro_gestao.entity.StatusProcesso;
+import com.aro.aro_gestao.entity.TipoProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
 import com.aro.aro_gestao.entity.Tarefa;
 import com.aro.aro_gestao.exception.BusinessException;
@@ -11,6 +15,7 @@ import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
+import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +37,7 @@ class CalendarioServiceTest {
     @Mock private AtendimentoRepository atendimentoRepository;
     @Mock private ClienteRepository clienteRepository;
     @Mock private CompromissoRepository compromissoRepository;
+    @Mock private ProcessoRepository processoRepository;
     @InjectMocks private CalendarioService calendarioService;
 
     @Test
@@ -46,6 +52,8 @@ class CalendarioServiceTest {
         verify(atendimentoRepository).findByProximoContatoBetweenOrderByProximoContatoAscIdAsc(
                 resultado.getInicio(), resultado.getFim());
         verify(compromissoRepository).findByDataBetweenOrderByDataAscIdAsc(
+                resultado.getInicio(), resultado.getFim());
+        verify(processoRepository).findByPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(
                 resultado.getInicio(), resultado.getFim());
         verifyNoInteractions(clienteRepository);
     }
@@ -150,6 +158,46 @@ class CalendarioServiceTest {
         tarefa.setPrazo(data);
         tarefa.setStatus(StatusTarefa.PENDENTE);
         return tarefa;
+    }
+
+    @Test
+    void deveIncluirPrazosDeProcessosComTituloEStatus() {
+        Cliente cliente = new Cliente();
+        cliente.setId(3L);
+        cliente.setNomeCompleto("Cliente de teste");
+
+        Imovel imovel = new Imovel();
+        imovel.setDenominacao("Fazenda Boa Vista");
+
+        Processo comImovel = new Processo();
+        comImovel.setId(11L);
+        comImovel.setCliente(cliente);
+        comImovel.setImovel(imovel);
+        comImovel.setTipo(TipoProcesso.GEORREFERENCIAMENTO);
+        comImovel.setStatus(StatusProcesso.EXIGENCIA);
+        comImovel.setPrazoPrevisto(LocalDate.of(2026, 10, 20));
+
+        Processo semImovel = new Processo();
+        semImovel.setId(12L);
+        semImovel.setCliente(cliente);
+        semImovel.setTipo(TipoProcesso.RETIFICACAO_MATRICULA);
+        semImovel.setStatus(StatusProcesso.DEFERIDO);
+        semImovel.setPrazoPrevisto(LocalDate.of(2026, 10, 5));
+
+        when(clienteRepository.existsById(3L)).thenReturn(true);
+        when(processoRepository.findByClienteIdAndPrazoPrevistoBetweenOrderByPrazoPrevistoAscIdAsc(
+                3L, LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31)))
+                .thenReturn(List.of(semImovel, comImovel));
+
+        CalendarioResponseDTO resultado = calendarioService.buscarMes("2026-10", 3L);
+
+        assertEquals(List.of("PROCESSO:12", "PROCESSO:11"),
+                resultado.getEventos().stream().map(e -> e.getId()).toList());
+        assertEquals("Retificação de matrícula", resultado.getEventos().getFirst().getTitulo());
+        assertEquals(StatusProcesso.DEFERIDO,
+                resultado.getEventos().getFirst().getStatusProcesso());
+        assertEquals("Georreferenciamento - Fazenda Boa Vista", resultado.getEventos().getLast().getTitulo());
+        assertEquals("Cliente de teste", resultado.getEventos().getLast().getNomeCliente());
     }
 }
 

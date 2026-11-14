@@ -8,8 +8,12 @@ const nomesDiasSemana = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 const rotulosTipoEvento = {
     TAREFA: 'Prazo',
     RETORNO: 'Retorno',
-    COMPROMISSO: 'Compromisso'
+    COMPROMISSO: 'Compromisso',
+    PROCESSO: 'Processo'
 };
+
+// Processos com estes status já terminaram e aparecem riscados no calendário
+const statusProcessoFinalizados = ['DEFERIDO', 'INDEFERIDO', 'ARQUIVADO'];
 
 // Mês que está na tela. new Date() sem texto usa o relógio do computador, sem problema de fuso.
 const agora = new Date();
@@ -238,6 +242,8 @@ function criarEvento(evento, hoje) {
         botao.classList.add(classeDaTarefa(evento, hoje));
     } else if (evento.tipo === 'RETORNO') {
         botao.classList.add('evento-retorno');
+    } else if (evento.tipo === 'PROCESSO') {
+        botao.classList.add(classeDoProcesso(evento, hoje));
     } else {
         botao.classList.add('evento-compromisso');
     }
@@ -284,11 +290,24 @@ function classeDaTarefa(evento, hoje) {
     return 'evento-tarefa';
 }
 
+// Processo finalizado = riscado; em andamento com prazo vencido = vermelho
+function classeDoProcesso(evento, hoje) {
+    if (statusProcessoFinalizados.includes(evento.statusProcesso)) {
+        return 'evento-concluido';
+    }
+    if (evento.data < hoje) {
+        return 'evento-atrasado';
+    }
+    return 'evento-processo';
+}
+
 function abrirEvento(evento) {
     if (evento.tipo === 'TAREFA') {
         window.location.href = 'tarefas.html?clienteId=' + encodeURIComponent(evento.clienteId);
     } else if (evento.tipo === 'RETORNO') {
         window.location.href = 'atendimentos.html?clienteId=' + encodeURIComponent(evento.clienteId);
+    } else if (evento.tipo === 'PROCESSO') {
+        window.location.href = 'processos.html?clienteId=' + encodeURIComponent(evento.clienteId);
     } else {
         abrirModalEdicaoCompromisso(evento.origemId);
     }
