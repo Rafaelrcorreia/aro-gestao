@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item ativo">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Imóveis</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Calendário</h1>
+            <button type="button" id="btnNovoCompromisso" class="botao botao-primario">Novo compromisso</button>
+        </header>
+
+        <div class="barra-calendario">
+            <div class="navegacao-calendario">
+                <button type="button" id="btnMesAnterior" class="botao botao-secundario" aria-label="Mês anterior">&larr;</button>
+                <h2 id="tituloMes" class="titulo-mes"></h2>
+                <button type="button" id="btnMesSeguinte" class="botao botao-secundario" aria-label="Mês seguinte">&rarr;</button>
+                <button type="button" id="btnHoje" class="botao botao-secundario">Hoje</button>
+            </div>
+
+            <ul class="legenda-calendario">
+                <li><span class="marca-legenda evento-tarefa"></span>Prazo de tarefa</li>
+                <li><span class="marca-legenda evento-proximo"></span>Prazo em até 3 dias</li>
+                <li><span class="marca-legenda evento-atrasado"></span>Tarefa atrasada</li>
+                <li><span class="marca-legenda evento-retorno"></span>Retorno ao cliente</li>
+                <li><span class="marca-legenda evento-compromisso"></span>Compromisso</li>
+            </ul>
+        </div>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando calendário...</span>
+        </div>
+
+        <div class="cabecalho-semana" aria-hidden="true">
+            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+
+        <section id="gradeCalendario" class="grade-calendario"></section>
+
+        <div id="estadoVazioCalendario" class="estado-vazio oculto">
+            <p>Nenhum prazo, retorno ou compromisso neste mês.</p>
+        </div>
+    </main>
+
+</div>
+
+<dialog id="modalFormularioCompromisso" class="modal">
+    <form id="formularioCompromisso" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalCompromisso">Novo compromisso</h2>
+            <button type="button" id="btnFecharModalCompromisso" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="campo-formulario">
+                <label for="inputTituloCompromisso">Título *</label>
+                <input type="text" id="inputTituloCompromisso" maxlength="150" required>
+                <span class="mensagem-erro-campo" id="erroTituloCompromisso"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataCompromisso">Data *</label>
+                    <input type="date" id="inputDataCompromisso" required>
+                    <span class="mensagem-erro-campo" id="erroDataCompromisso"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputHoraCompromisso">Hora</label>
+                    <input type="time" id="inputHoraCompromisso">
+                    <span class="mensagem-erro-campo" id="erroHoraCompromisso"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectClienteCompromisso">Cliente</label>
+                <select id="selectClienteCompromisso">
+                    <option value="">Sem cliente</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroClienteCompromisso"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaDescricaoCompromisso">Descrição</label>
+                <textarea id="textareaDescricaoCompromisso" maxlength="2000" rows="3"></textarea>
+                <span class="mensagem-erro-campo" id="erroDescricaoCompromisso"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnExcluirCompromisso" class="botao botao-perigo botao-a-esquerda oculto">Excluir</button>
+            <button type="button" id="btnCancelarCompromisso" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarCompromisso" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusaoCompromisso" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusaoCompromisso" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusaoCompromisso"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusaoCompromisso" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusaoCompromisso" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/calendario.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

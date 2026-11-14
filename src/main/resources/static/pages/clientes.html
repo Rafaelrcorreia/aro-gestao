@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item ativo">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Imóveis</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Clientes</h1>
+            <button type="button" id="btnNovoCliente" class="botao botao-primario">Novo cliente</button>
+        </header>
+
+        <section class="barra-ferramentas">
+            <div class="campo-pesquisa">
+                <input type="search" id="inputPesquisa" placeholder="Pesquisar por nome, CPF/CNPJ ou telefone" aria-label="Pesquisar clientes">
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroStatus">Status</label>
+                <select id="selectFiltroStatus">
+                    <option value="">Todos</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="INATIVO">Inativo</option>
+                    <option value="AGUARDANDO_RETORNO">Aguardando retorno</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando clientes...</span>
+        </div>
+
+        <section class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaClientes">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>CPF/CNPJ</th>
+                    <th>Telefone</th>
+                    <th>Cidade/UF</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaClientes"></tbody>
+            </table>
+
+            <div id="estadoVazioClientes" class="estado-vazio oculto">
+                <p>Nenhum cliente encontrado.</p>
+                <p>Clique em "Novo cliente" para cadastrar o primeiro.</p>
+            </div>
+        </section>
+
+        <nav class="paginacao" aria-label="Paginação">
+            <button type="button" class="botao botao-secundario" disabled>Anterior</button>
+            <span class="paginacao-info">Página 1</span>
+            <button type="button" class="botao botao-secundario" disabled>Próxima</button>
+        </nav>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioCliente" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Novo cliente</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="campo-formulario">
+                <label for="inputNomeCompleto">Nome completo *</label>
+                <input type="text" id="inputNomeCompleto" maxlength="150" required>
+                <span class="mensagem-erro-campo" id="erroNomeCompleto"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectTipoPessoa">Tipo de pessoa *</label>
+                    <select id="selectTipoPessoa" required>
+                        <option value="">Selecione</option>
+                        <option value="FISICA">Física</option>
+                        <option value="JURIDICA">Jurídica</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroTipoPessoa"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputCpfCnpj">CPF/CNPJ *</label>
+                    <input type="text" id="inputCpfCnpj" maxlength="18" required>
+                    <span class="mensagem-erro-campo" id="erroCpfCnpj"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputTelefone">Telefone</label>
+                    <input type="text" id="inputTelefone" maxlength="15">
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputWhatsapp">WhatsApp</label>
+                    <input type="text" id="inputWhatsapp" maxlength="15">
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputEmail">E-mail</label>
+                <input type="email" id="inputEmail" maxlength="150">
+                <span class="mensagem-erro-campo" id="erroEmail"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputEndereco">Endereço</label>
+                <input type="text" id="inputEndereco" maxlength="200">
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputCidade">Cidade</label>
+                    <input type="text" id="inputCidade" maxlength="100">
+                </div>
+
+                <div class="campo-formulario campo-pequeno">
+                    <label for="inputEstado">Estado</label>
+                    <input type="text" id="inputEstado" maxlength="2" placeholder="UF">
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaObservacoes">Observações</label>
+                <textarea id="textareaObservacoes" maxlength="1000" rows="3"></textarea>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectStatus">Status *</label>
+                <select id="selectStatus" required>
+                    <option value="">Selecione</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="INATIVO">Inativo</option>
+                    <option value="AGUARDANDO_RETORNO">Aguardando retorno</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroStatus"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarCliente" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusao" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusao" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusao"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusao" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusao" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/clientes.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

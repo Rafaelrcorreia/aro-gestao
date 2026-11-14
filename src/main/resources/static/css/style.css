@@ -1,0 +1,591 @@
+:root {
+    --verde-principal: #07883F;
+    --verde-escuro: #07552C;
+    --fundo-claro: #F5F7F6;
+    --branco: #FFFFFF;
+    --texto-escuro: #1C2520;
+    --vermelho: #C0392B;
+    --amarelo: #C9971C;
+    --cinza-borda: #DDE3E0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--fundo-claro);
+    color: var(--texto-escuro);
+}
+
+h1, h2 {
+    color: var(--texto-escuro);
+}
+
+a {
+    color: var(--verde-principal);
+}
+
+.menu-lateral {
+    background-color: var(--verde-escuro);
+    color: var(--branco);
+}
+
+.menu-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--branco);
+}
+
+.menu-titulo {
+    font-size: 14px;
+    color: #D7EEDF;
+}
+
+.menu-item {
+    color: #E4F2E9;
+    font-size: 14px;
+}
+
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.menu-item.ativo {
+    background-color: var(--verde-principal);
+    color: var(--branco);
+    font-weight: 600;
+}
+
+.menu-item.desativado {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.menu-item-badge {
+    font-size: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 2px 6px;
+    border-radius: 999px;
+}
+
+.cartao-indicador {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+}
+
+.cartao-indicador-titulo {
+    font-size: 13px;
+    color: #5B6660;
+}
+
+.cartao-indicador-valor {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--verde-escuro);
+}
+
+input, select, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 9px 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 8px;
+    background-color: var(--branco);
+    color: var(--texto-escuro);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 3px rgba(7, 136, 63, 0.15);
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #40493F;
+}
+
+.botao {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.botao:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.botao-primario {
+    background-color: var(--verde-principal);
+    color: var(--branco);
+}
+
+.botao-primario:hover:not(:disabled) {
+    background-color: var(--verde-escuro);
+}
+
+.botao-secundario {
+    background-color: var(--branco);
+    color: var(--texto-escuro);
+    border-color: var(--cinza-borda);
+}
+
+.botao-secundario:hover:not(:disabled) {
+    background-color: #EDF1EF;
+}
+
+.botao-perigo {
+    background-color: var(--vermelho);
+    color: var(--branco);
+}
+
+.botao-perigo:hover:not(:disabled) {
+    background-color: #A6321F;
+}
+
+.botao-abrir-menu {
+    background-color: var(--verde-escuro);
+}
+
+.botao-abrir-menu span {
+    background-color: var(--branco);
+}
+
+.tabela-responsiva {
+    background-color: var(--branco);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.tabela-responsiva thead {
+    background-color: #EEF4F0;
+}
+
+.tabela-responsiva th {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #5B6660;
+}
+
+.tabela-responsiva tbody tr {
+    border-top: 1px solid var(--cinza-borda);
+}
+
+.tabela-responsiva tbody tr:hover {
+    background-color: #F7FAF8;
+}
+
+@media (max-width: 900px) {
+    .tabela-responsiva tbody tr {
+        background-color: var(--branco);
+        border: 1px solid var(--cinza-borda);
+    }
+}
+
+.selo-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selo-status.status-ativo {
+    background-color: #E1F3E7;
+    color: var(--verde-escuro);
+}
+
+.selo-status.status-inativo {
+    background-color: #F2E1E1;
+    color: var(--vermelho);
+}
+
+.selo-status.status-aguardando {
+    background-color: #FBF0DA;
+    color: var(--amarelo);
+}
+
+.acoes-tabela {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.botao-icone {
+    background: none;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--texto-escuro);
+}
+
+.botao-icone:hover {
+    background-color: #EDF1EF;
+}
+
+.botao-icone.excluir {
+    color: var(--vermelho);
+    border-color: #EAC3BD;
+}
+
+.estado-vazio {
+    background-color: var(--branco);
+    border-radius: 12px;
+    border: 1px dashed var(--cinza-borda);
+    color: #5B6660;
+}
+
+.indicador-carregamento {
+    color: #5B6660;
+    font-size: 14px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--cinza-borda);
+    border-top-color: var(--verde-principal);
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.paginacao-info {
+    font-size: 13px;
+    color: #5B6660;
+}
+
+.modal::backdrop {
+    background-color: rgba(28, 37, 32, 0.5);
+}
+
+.modal {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    width: min(560px, 92vw);
+    background-color: var(--fundo-claro);
+}
+
+.modal-pequeno {
+    width: min(420px, 92vw);
+}
+
+.modal-cabecalho {
+    border-bottom: 1px solid var(--cinza-borda);
+}
+
+.modal-rodape {
+    border-top: 1px solid var(--cinza-borda);
+}
+
+.botao-fechar-modal {
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #5B6660;
+}
+
+.mensagem-erro-campo {
+    font-size: 12px;
+    color: var(--vermelho);
+    min-height: 14px;
+}
+
+.campo-formulario.com-erro input,
+.campo-formulario.com-erro select {
+    border-color: var(--vermelho);
+}
+
+.mensagem-toast {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--branco);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mensagem-toast.sucesso {
+    background-color: var(--verde-principal);
+}
+
+.mensagem-toast.erro {
+    background-color: var(--vermelho);
+}
+
+.mensagem-toast.aviso {
+    background-color: var(--amarelo);
+}
+.link-voltar {
+    color: var(--verde-principal);
+    font-weight: 600;
+}
+
+.link-voltar:hover {
+    color: var(--verde-escuro);
+}
+
+.cartao-atendimento {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-left: 4px solid var(--verde-principal);
+}
+
+.cartao-atendimento-data {
+    font-size: 13px;
+    color: #5B6660;
+    font-weight: 600;
+}
+
+.cartao-atendimento-descricao {
+    font-size: 14px;
+    color: #40493F;
+}
+
+.selo-canal {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selo-canal.canal-whatsapp {
+    background-color: #E1F3E7;
+    color: var(--verde-escuro);
+}
+
+.selo-canal.canal-telefone {
+    background-color: #E4ECF5;
+    color: #2F5FA8;
+}
+
+.selo-canal.canal-presencial {
+    background-color: #FBF0DA;
+    color: var(--amarelo);
+}
+
+.selo-canal.canal-email {
+    background-color: #EFEAF6;
+    color: #6A4C93;
+}
+
+.chip-proximo-contato {
+    background-color: #F2E1E1;
+    color: var(--vermelho);
+}
+
+.cartao-tarefa {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-left: 4px solid var(--verde-principal);
+}
+
+.cartao-tarefa.tarefa-atrasada {
+    border-left-color: var(--vermelho);
+}
+
+.cartao-tarefa-responsavel {
+    color: #5B6660;
+}
+
+.selo-prioridade {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selo-prioridade.prioridade-baixa {
+    background-color: #EEF4F0;
+    color: #5B6660;
+}
+
+.selo-prioridade.prioridade-media {
+    background-color: #FBF0DA;
+    color: var(--amarelo);
+}
+
+.selo-prioridade.prioridade-alta {
+    background-color: #F2E1E1;
+    color: var(--vermelho);
+}
+
+.selo-status-tarefa {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selo-status-tarefa.status-tarefa-pendente {
+    background-color: #EEF4F0;
+    color: #5B6660;
+}
+
+.selo-status-tarefa.status-tarefa-em_andamento {
+    background-color: #E4ECF5;
+    color: #2F5FA8;
+}
+
+.selo-status-tarefa.status-tarefa-aguardando_cliente {
+    background-color: #FBF0DA;
+    color: var(--amarelo);
+}
+
+.selo-status-tarefa.status-tarefa-concluida {
+    background-color: #E1F3E7;
+    color: var(--verde-escuro);
+}
+
+.selo-status-tarefa.status-tarefa-atrasada {
+    background-color: #F2E1E1;
+    color: var(--vermelho);
+}
+
+.secao-checklist {
+    background-color: #F7FAF8;
+    border: 1px solid var(--cinza-borda);
+}
+
+.linha-checklist.checklist-concluido span {
+    text-decoration: line-through;
+    color: #8A938D;
+}
+
+.botao-remover-item {
+    color: var(--vermelho);
+}
+
+.cartao-indicador.cartao-alerta {
+    border-color: #EAC3BD;
+    background-color: #FBF1EF;
+}
+
+.cartao-indicador.cartao-alerta .cartao-indicador-valor {
+    color: var(--vermelho);
+}
+
+.prazo-proximo {
+    color: var(--amarelo);
+    font-weight: 600;
+}
+
+.titulo-mes {
+    color: var(--texto-escuro);
+}
+
+.legenda-calendario {
+    color: #5B6660;
+}
+
+.cabecalho-semana span {
+    color: #5B6660;
+}
+
+.dia-calendario {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+}
+
+.dia-calendario.dia-fora-do-mes {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.dia-calendario.dia-hoje {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 1px var(--verde-principal);
+}
+
+.dia-hoje .dia-numero {
+    background-color: var(--verde-principal);
+    color: var(--branco);
+}
+
+.dia-semana {
+    color: #5B6660;
+}
+
+.botao-adicionar-dia {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    color: var(--verde-escuro);
+}
+
+.botao-adicionar-dia:hover {
+    background-color: #EDF1EF;
+}
+
+.evento-calendario {
+    border: 1px solid transparent;
+    border-left-width: 3px;
+    color: var(--texto-escuro);
+}
+
+.evento-calendario:hover {
+    filter: brightness(0.96);
+}
+
+.evento-calendario:focus-visible {
+    outline: 2px solid var(--verde-principal);
+    outline-offset: 1px;
+}
+
+.evento-cliente {
+    color: #5B6660;
+}
+
+.evento-tarefa {
+    background-color: #E1F3E7;
+    border-left-color: var(--verde-principal);
+}
+
+.evento-proximo {
+    background-color: #FBF0DA;
+    border-left-color: var(--amarelo);
+}
+
+.evento-atrasado {
+    background-color: #F2E1E1;
+    border-left-color: var(--vermelho);
+}
+
+.evento-retorno {
+    background-color: #E4ECF5;
+    border-left-color: #2F5FA8;
+}
+
+.evento-compromisso {
+    background-color: #EFEAF6;
+    border-left-color: #6A4C93;
+}
+
+.evento-calendario.evento-concluido {
+    background-color: #EEF4F0;
+    border-left-color: #8A938D;
+    color: #8A938D;
+}
+
+.evento-concluido .evento-titulo {
+    text-decoration: line-through;
+}
+
+.campo-formulario.com-erro textarea {
+    border-color: var(--vermelho);
+}

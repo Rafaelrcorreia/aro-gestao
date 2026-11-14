@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atendimentos — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item ativo">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Imóveis</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <a href="clientes.html" class="link-voltar">&larr; Voltar para Clientes</a>
+
+        <header class="cabecalho-pagina">
+            <h1 id="tituloAtendimentos">Atendimentos</h1>
+            <button type="button" id="btnNovoAtendimento" class="botao botao-primario">Novo atendimento</button>
+        </header>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando atendimentos...</span>
+        </div>
+
+        <section id="listaAtendimentos" class="lista-atendimentos"></section>
+
+        <div id="estadoVazioAtendimentos" class="estado-vazio oculto">
+            <p>Nenhum atendimento registrado para este cliente.</p>
+            <p>Clique em "Novo atendimento" para registrar o primeiro contato.</p>
+        </div>
+    </main>
+
+</div>
+
+<dialog id="modalFormularioAtendimento" class="modal">
+    <form id="formularioAtendimento" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalAtendimento">Novo atendimento</h2>
+            <button type="button" id="btnFecharModalAtendimento" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataHora">Data e hora *</label>
+                    <input type="datetime-local" id="inputDataHora" required>
+                    <span class="mensagem-erro-campo" id="erroDataHora"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectCanal">Canal *</label>
+                    <select id="selectCanal" required>
+                        <option value="">Selecione</option>
+                        <option value="WHATSAPP">WhatsApp</option>
+                        <option value="TELEFONE">Telefone</option>
+                        <option value="PRESENCIAL">Presencial</option>
+                        <option value="EMAIL">E-mail</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroCanal"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputAssunto">Assunto *</label>
+                <input type="text" id="inputAssunto" maxlength="150" required>
+                <span class="mensagem-erro-campo" id="erroAssunto"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaDescricao">Descrição *</label>
+                <textarea id="textareaDescricao" maxlength="2000" rows="4" required></textarea>
+                <span class="mensagem-erro-campo" id="erroDescricao"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputProximoContato">Próximo contato</label>
+                <input type="date" id="inputProximoContato">
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarAtendimento" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarAtendimento" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusaoAtendimento" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusaoAtendimento" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusaoAtendimento"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusaoAtendimento" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusaoAtendimento" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/atendimentos.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

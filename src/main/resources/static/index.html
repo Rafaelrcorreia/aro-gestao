@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARO Gestão</title>
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="index.html" class="menu-item ativo">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="pages/clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="pages/calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Imóveis</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Dashboard</h1>
+        </header>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando indicadores...</span>
+        </div>
+
+        <section class="cartoes-dashboard">
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Clientes ativos</span>
+                <span id="valorClientesAtivos" class="cartao-indicador-valor">—</span>
+            </div>
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Tarefas pendentes</span>
+                <span id="valorTarefasPendentes" class="cartao-indicador-valor">—</span>
+            </div>
+            <div id="cartaoTarefasAtrasadas" class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Tarefas atrasadas</span>
+                <span id="valorTarefasAtrasadas" class="cartao-indicador-valor">—</span>
+            </div>
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Próximo prazo</span>
+                <span id="valorProximoPrazo" class="cartao-indicador-valor">—</span>
+            </div>
+        </section>
+
+        <section class="secao-dashboard">
+            <h2>Próximos prazos</h2>
+            <div class="area-tabela">
+                <table class="tabela-responsiva">
+                    <thead>
+                    <tr>
+                        <th>Prazo</th>
+                        <th>Tarefa</th>
+                        <th>Cliente</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="corpoProximosPrazos"></tbody>
+                </table>
+            </div>
+            <div id="vazioProximosPrazos" class="estado-vazio oculto">
+                <p>Nenhuma tarefa em aberto com prazo de hoje em diante.</p>
+            </div>
+        </section>
+
+        <section class="secao-dashboard">
+            <h2>Últimos atendimentos</h2>
+            <div class="area-tabela">
+                <table class="tabela-responsiva">
+                    <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Canal</th>
+                        <th>Assunto</th>
+                    </tr>
+                    </thead>
+                    <tbody id="corpoUltimosAtendimentos"></tbody>
+                </table>
+            </div>
+            <div id="vazioUltimosAtendimentos" class="estado-vazio oculto">
+                <p>Nenhum atendimento registrado ainda.</p>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

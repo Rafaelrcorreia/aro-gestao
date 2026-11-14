@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item ativo">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Imóveis</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <a href="clientes.html" class="link-voltar">&larr; Voltar para Clientes</a>
+
+        <header class="cabecalho-pagina">
+            <h1 id="tituloTarefas">Tarefas</h1>
+            <button type="button" id="btnNovaTarefa" class="botao botao-primario">Nova tarefa</button>
+        </header>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando tarefas...</span>
+        </div>
+
+        <section id="listaTarefas" class="lista-atendimentos"></section>
+
+        <div id="estadoVazioTarefas" class="estado-vazio oculto">
+            <p>Nenhuma tarefa cadastrada para este cliente.</p>
+            <p>Clique em "Nova tarefa" para criar a primeira.</p>
+        </div>
+    </main>
+
+</div>
+
+<dialog id="modalFormularioTarefa" class="modal">
+    <form id="formularioTarefa" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalTarefa">Nova tarefa</h2>
+            <button type="button" id="btnFecharModalTarefa" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="campo-formulario">
+                <label for="inputTitulo">Título *</label>
+                <input type="text" id="inputTitulo" maxlength="150" required>
+                <span class="mensagem-erro-campo" id="erroTitulo"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaDescricaoTarefa">Descrição</label>
+                <textarea id="textareaDescricaoTarefa" maxlength="2000" rows="3"></textarea>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputResponsavel">Responsável *</label>
+                    <input type="text" id="inputResponsavel" maxlength="100" required>
+                    <span class="mensagem-erro-campo" id="erroResponsavel"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectPrioridade">Prioridade *</label>
+                    <select id="selectPrioridade" required>
+                        <option value="">Selecione</option>
+                        <option value="BAIXA">Baixa</option>
+                        <option value="MEDIA">Média</option>
+                        <option value="ALTA">Alta</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroPrioridade"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputPrazo">Prazo *</label>
+                    <input type="date" id="inputPrazo" required>
+                    <span class="mensagem-erro-campo" id="erroPrazo"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectStatusTarefa">Status *</label>
+                    <select id="selectStatusTarefa" required>
+                        <option value="">Selecione</option>
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="EM_ANDAMENTO">Em andamento</option>
+                        <option value="AGUARDANDO_CLIENTE">Aguardando cliente</option>
+                        <option value="CONCLUIDA">Concluída</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroStatusTarefa"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarTarefa" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarTarefa" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusaoTarefa" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusaoTarefa" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusaoTarefa"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusaoTarefa" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusaoTarefa" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/tarefas.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

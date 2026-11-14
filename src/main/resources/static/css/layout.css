@@ -1,0 +1,603 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.menu-lateral {
+    width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.menu-topo {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 24px 20px;
+}
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    gap: 4px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: default;
+}
+
+.menu-item[href] {
+    cursor: pointer;
+}
+
+.conteudo-principal {
+    flex: 1;
+    min-width: 0;
+    padding: 24px 32px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0;
+}
+
+.cartoes-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.cartao-indicador {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.barra-ferramentas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.campo-pesquisa {
+    flex: 1;
+    min-width: 220px;
+}
+
+.campo-pesquisa input {
+    width: 100%;
+}
+
+.campo-filtro {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.area-tabela {
+    overflow-x: auto;
+}
+
+.tabela-responsiva {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-responsiva th,
+.tabela-responsiva td {
+    text-align: left;
+    padding: 12px 14px;
+    vertical-align: middle;
+}
+
+.paginacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.estado-vazio {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.indicador-carregamento {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 0;
+}
+
+.oculto {
+    display: none !important;
+}
+
+.botao-abrir-menu {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 40;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.botao-abrir-menu span {
+    display: block;
+    width: 20px;
+    height: 2px;
+}
+
+.sobreposicao-menu {
+    display: none;
+}
+
+.container-mensagens {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 320px;
+}
+
+.modal-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+}
+
+.modal-corpo {
+    padding: 4px 20px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.campo-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grupo-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.campo-pequeno {
+    max-width: 100px;
+}
+
+.link-voltar {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.lista-atendimentos {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cartao-atendimento {
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.cartao-atendimento-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.cartao-atendimento-assunto {
+    margin: 0 0 6px 0;
+}
+
+.cartao-atendimento-descricao {
+    margin: 0 0 10px 0;
+    white-space: pre-wrap;
+}
+
+.chip-proximo-contato {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.cartao-tarefa {
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+
+.cartao-tarefa-responsavel {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+}
+
+.grupo-selos-tarefa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.secao-checklist {
+    margin: 14px 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+}
+
+.lista-checklist {
+    list-style: none;
+    margin: 0 0 10px 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.linha-checklist {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.linha-checklist span {
+    flex: 1;
+    font-size: 13px;
+}
+
+.linha-adicionar-item {
+    display: flex;
+    gap: 8px;
+}
+
+.linha-adicionar-item input {
+    flex: 1;
+}
+
+.botao-remover-item {
+    background: none;
+    border: none;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.secao-dashboard {
+    margin-bottom: 28px;
+}
+
+.secao-dashboard h2 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+}
+
+.barra-calendario {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-bottom: 16px;
+}
+
+.navegacao-calendario {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.titulo-mes {
+    margin: 0 8px;
+    min-width: 190px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.legenda-calendario {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 12px;
+}
+
+.legenda-calendario li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.marca-legenda {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.cabecalho-semana,
+.grade-calendario {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.cabecalho-semana {
+    margin-bottom: 6px;
+}
+
+.cabecalho-semana span {
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.dia-calendario {
+    min-height: 110px;
+    padding: 6px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.dia-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dia-numero {
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+}
+
+.dia-semana {
+    display: none;
+    font-size: 13px;
+}
+
+.botao-adicionar-dia {
+    margin-left: auto;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.dia-calendario:hover .botao-adicionar-dia,
+.botao-adicionar-dia:focus-visible {
+    opacity: 1;
+}
+
+.lista-eventos-dia {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.evento-calendario {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    width: 100%;
+    padding: 4px 6px;
+    border-radius: 6px;
+    text-align: left;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.evento-tipo {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.evento-titulo,
+.evento-cliente {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao-a-esquerda {
+    margin-right: auto;
+}
+
+@media (max-width: 900px) {
+    .botao-abrir-menu {
+        display: flex;
+    }
+
+    .menu-lateral {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+        z-index: 50;
+        width: 260px;
+    }
+
+    .menu-lateral.aberto {
+        transform: translateX(0);
+    }
+
+    .sobreposicao-menu.visivel {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 45;
+        background: rgba(0, 0, 0, 0.4);
+    }
+
+    .conteudo-principal {
+        padding: 76px 16px 24px 16px;
+    }
+
+    .grupo-campos {
+        grid-template-columns: 1fr;
+    }
+
+    .tabela-responsiva thead {
+        display: none;
+    }
+
+    .tabela-responsiva, .tabela-responsiva tbody, .tabela-responsiva tr, .tabela-responsiva td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabela-responsiva tr {
+        border-radius: 12px;
+        margin-bottom: 12px;
+        padding: 8px 4px;
+    }
+
+    .tabela-responsiva td {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 12px;
+        text-align: right;
+        border: none;
+    }
+
+    .tabela-responsiva td::before {
+        content: attr(data-rotulo);
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .cabecalho-semana {
+        display: none;
+    }
+
+    /* No celular o mes vira uma lista: so aparecem os dias que tem algo */
+    .grade-calendario {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .dia-fora-do-mes,
+    .dia-sem-eventos {
+        display: none;
+    }
+
+    .dia-calendario {
+        min-height: 0;
+        padding: 10px 12px;
+    }
+
+    .dia-semana {
+        display: inline;
+    }
+
+    .botao-adicionar-dia {
+        opacity: 1;
+        width: 28px;
+        height: 28px;
+    }
+
+    .evento-calendario {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .evento-titulo,
+    .evento-cliente {
+        white-space: normal;
+    }
+
+    .titulo-mes {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .navegacao-calendario {
+        width: 100%;
+    }
+}
