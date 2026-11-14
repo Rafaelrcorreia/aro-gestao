@@ -8,6 +8,7 @@ import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
+import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +24,18 @@ public class ClienteService {
     private final AtendimentoRepository atendimentoRepository;
     private final TarefaRepository tarefaRepository;
     private final CompromissoRepository compromissoRepository;
+    private final ImovelRepository imovelRepository;
 
     public ClienteService(ClienteRepository clienteRepository,
                           AtendimentoRepository atendimentoRepository,
                           TarefaRepository tarefaRepository,
-                          CompromissoRepository compromissoRepository) {
+                          CompromissoRepository compromissoRepository,
+                          ImovelRepository imovelRepository) {
         this.clienteRepository = clienteRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.tarefaRepository = tarefaRepository;
         this.compromissoRepository = compromissoRepository;
+        this.imovelRepository = imovelRepository;
     }
 
     public ClienteResponseDTO criar(ClienteRequestDTO dto) {
@@ -92,6 +96,9 @@ public class ClienteService {
         }
         if (compromissoRepository.existsByClienteId(clienteId)) {
             vinculos.add("compromissos");
+        }
+        if (imovelRepository.existsByClienteId(clienteId)) {
+            vinculos.add("imoveis");
         }
         if (!vinculos.isEmpty()) {
             throw new BusinessException("Nao e possivel excluir o cliente porque ele possui "

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imóveis — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item ativo">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Processos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Documentos</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Imóveis</h1>
+            <button type="button" id="btnNovoImovel" class="botao botao-primario">Novo imóvel</button>
+        </header>
+
+        <section class="barra-ferramentas">
+            <div class="campo-pesquisa">
+                <input type="search" id="inputPesquisa" placeholder="Pesquisar por imóvel, município, matrícula, CAR, CCIR ou NIRF" aria-label="Pesquisar imóveis">
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroCliente">Cliente</label>
+                <select id="selectFiltroCliente">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando imóveis...</span>
+        </div>
+
+        <section class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaImoveis">
+                <thead>
+                <tr>
+                    <th>Imóvel</th>
+                    <th>Cliente</th>
+                    <th>Município/UF</th>
+                    <th>Área (ha)</th>
+                    <th>Matrícula</th>
+                    <th>Georreferenciamento</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaImoveis"></tbody>
+            </table>
+
+            <div id="estadoVazioImoveis" class="estado-vazio oculto">
+                <p>Nenhum imóvel encontrado.</p>
+                <p>Clique em "Novo imóvel" para cadastrar o primeiro.</p>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioImovel" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Novo imóvel</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="campo-formulario">
+                <label for="inputDenominacao">Denominação do imóvel *</label>
+                <input type="text" id="inputDenominacao" maxlength="150" placeholder="Ex.: Fazenda Boa Vista" required>
+                <span class="mensagem-erro-campo" id="erroDenominacao"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectCliente">Cliente (proprietário) *</label>
+                <select id="selectCliente" required>
+                    <option value="">Selecione</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroClienteId"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputMunicipio">Município *</label>
+                    <input type="text" id="inputMunicipio" maxlength="100" required>
+                    <span class="mensagem-erro-campo" id="erroMunicipio"></span>
+                </div>
+
+                <div class="campo-formulario campo-pequeno">
+                    <label for="inputEstado">Estado *</label>
+                    <input type="text" id="inputEstado" maxlength="2" placeholder="UF" required>
+                    <span class="mensagem-erro-campo" id="erroEstado"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputAreaHectares">Área total (ha)</label>
+                    <input type="text" id="inputAreaHectares" inputmode="decimal" maxlength="16" placeholder="Ex.: 125,5">
+                    <span class="mensagem-erro-campo" id="erroAreaHectares"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectSituacaoGeorreferenciamento">Georreferenciamento *</label>
+                    <select id="selectSituacaoGeorreferenciamento" required>
+                        <option value="NAO_INICIADO">Não iniciado</option>
+                        <option value="EM_ANDAMENTO">Em andamento</option>
+                        <option value="CERTIFICADO">Certificado (SIGEF)</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroSituacaoGeorreferenciamento"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputMatricula">Matrícula</label>
+                    <input type="text" id="inputMatricula" maxlength="50">
+                    <span class="mensagem-erro-campo" id="erroMatricula"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputCartorio">Cartório</label>
+                    <input type="text" id="inputCartorio" maxlength="150">
+                    <span class="mensagem-erro-campo" id="erroCartorio"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputCodigoCar">Recibo do CAR</label>
+                <input type="text" id="inputCodigoCar" maxlength="60">
+                <span class="mensagem-erro-campo" id="erroCodigoCar"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputCodigoCcir">Código do imóvel (CCIR/INCRA)</label>
+                    <input type="text" id="inputCodigoCcir" maxlength="30">
+                    <span class="mensagem-erro-campo" id="erroCodigoCcir"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputNirf">NIRF/CIB (ITR)</label>
+                    <input type="text" id="inputNirf" maxlength="20">
+                    <span class="mensagem-erro-campo" id="erroNirf"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaObservacoes">Observações</label>
+                <textarea id="textareaObservacoes" maxlength="1000" rows="3"></textarea>
+                <span class="mensagem-erro-campo" id="erroObservacoes"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarImovel" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusao" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusao" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusao"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusao" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusao" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/imoveis.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

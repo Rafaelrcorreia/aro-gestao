@@ -130,6 +130,7 @@ function criarCelulaAcoes(cliente) {
     const acoes = [
         ['Histórico', function () { window.location.href = 'atendimentos.html?clienteId=' + cliente.id; }],
         ['Tarefas', function () { window.location.href = 'tarefas.html?clienteId=' + cliente.id; }],
+        ['Imóveis', function () { window.location.href = 'imoveis.html?clienteId=' + cliente.id; }],
         ['Editar', function () { abrirModalEdicaoCliente(cliente.id); }],
         ['Excluir', function () { abrirModalExclusao(cliente.id, cliente.nomeCompleto); }]
     ];

@@ -10,6 +10,7 @@ import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
+import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,9 @@ class ClienteServiceTest {
 
     @Mock
     private CompromissoRepository compromissoRepository;
+
+    @Mock
+    private ImovelRepository imovelRepository;
 
     @InjectMocks
     private ClienteService clienteService;
@@ -129,10 +133,11 @@ class ClienteServiceTest {
         when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
         when(tarefaRepository.existsByClienteId(1L)).thenReturn(true);
         when(compromissoRepository.existsByClienteId(1L)).thenReturn(true);
+        when(imovelRepository.existsByClienteId(1L)).thenReturn(true);
 
         BusinessException ex = assertThrows(BusinessException.class, () -> clienteService.excluir(1L));
 
-        assertTrue(ex.getMessage().contains("tarefas, compromissos"));
+        assertTrue(ex.getMessage().contains("tarefas, compromissos, imoveis"));
         verify(clienteRepository, never()).delete(any(Cliente.class));
     }
 }

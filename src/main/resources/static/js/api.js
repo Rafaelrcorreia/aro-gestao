@@ -4,6 +4,7 @@ const URL_BASE_TAREFAS = '/api/tarefas';
 const URL_BASE_CALENDARIO = '/api/calendario';
 const URL_BASE_DASHBOARD = '/api/dashboard';
 const URL_BASE_COMPROMISSOS = '/api/compromissos';
+const URL_BASE_IMOVEIS = '/api/imoveis';
 
 async function requisitar(url, opcoes) {
     let resposta;
@@ -227,6 +228,55 @@ function atualizarCompromisso(id, dadosCompromisso) {
 
 function excluirCompromisso(id) {
     return requisitar(URL_BASE_COMPROMISSOS + '/' + id, {
+        method: 'DELETE'
+    });
+}
+
+// clienteId e busca são opcionais
+function listarImoveis(clienteId, busca) {
+    const parametros = new URLSearchParams();
+
+    if (clienteId) {
+        parametros.set('clienteId', clienteId);
+    }
+    if (busca && busca.trim() !== '') {
+        parametros.set('busca', busca.trim());
+    }
+
+    const consulta = parametros.toString();
+    return requisitar(URL_BASE_IMOVEIS + (consulta ? '?' + consulta : ''), {
+        method: 'GET'
+    });
+}
+
+function buscarImovel(id) {
+    return requisitar(URL_BASE_IMOVEIS + '/' + id, {
+        method: 'GET'
+    });
+}
+
+function criarImovel(dadosImovel) {
+    return requisitar(URL_BASE_IMOVEIS, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosImovel)
+    });
+}
+
+function atualizarImovel(id, dadosImovel) {
+    return requisitar(URL_BASE_IMOVEIS + '/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosImovel)
+    });
+}
+
+function excluirImovel(id) {
+    return requisitar(URL_BASE_IMOVEIS + '/' + id, {
         method: 'DELETE'
     });
 }

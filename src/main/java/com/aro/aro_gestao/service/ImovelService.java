@@ -1,0 +1,94 @@
+package com.aro.aro_gestao.service;
+
+import com.aro.aro_gestao.dto.ImovelRequestDTO;
+import com.aro.aro_gestao.dto.ImovelResponseDTO;
+import com.aro.aro_gestao.entity.Cliente;
+import com.aro.aro_gestao.entity.Imovel;
+import com.aro.aro_gestao.exception.ResourceNotFoundException;
+import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.ImovelRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class ImovelService {
+
+    private final ImovelRepository imovelRepository;
+    private final ClienteRepository clienteRepository;
+
+    public ImovelService(ImovelRepository imovelRepository, ClienteRepository clienteRepository) {
+        this.imovelRepository = imovelRepository;
+        this.clienteRepository = clienteRepository;
+    }
+
+    @Transactional
+    public ImovelResponseDTO criar(ImovelRequestDTO dto) {
+        Imovel imovel = new Imovel();
+        copiarDadosParaEntidade(dto, imovel);
+        return new ImovelResponseDTO(imovelRepository.save(imovel));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ImovelResponseDTO> listar(Long clienteId, String busca) {
+        if (clienteId != null) {
+            buscarClienteOuFalhar(clienteId);
+        }
+        String termo = (busca == null || busca.isBlank()) ? null : busca.trim();
+
+        return imovelRepository.buscar(clienteId, termo)
+                .stream()
+                .map(ImovelResponseDTO::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ImovelResponseDTO buscarPorId(Long id) {
+        return new ImovelResponseDTO(buscarImovelOuFalhar(id));
+    }
+
+    @Transactional
+    public ImovelResponseDTO atualizar(Long id, ImovelRequestDTO dto) {
+        Imovel imovel = buscarImovelOuFalhar(id);
+        copiarDadosParaEntidade(dto, imovel);
+        return new ImovelResponseDTO(imovelRepository.save(imovel));
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        imovelRepository.delete(buscarImovelOuFalhar(id));
+    }
+
+    private Imovel buscarImovelOuFalhar(Long id) {
+        return imovelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Imovel com id " + id + " nao encontrado"));
+    }
+
+    private Cliente buscarClienteOuFalhar(Long clienteId) {
+        return clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cliente com id " + clienteId + " nao encontrado"));
+    }
+
+    private void copiarDadosParaEntidade(ImovelRequestDTO dto, Imovel imovel) {
+        imovel.setCliente(buscarClienteOuFalhar(dto.getClienteId()));
+        imovel.setDenominacao(dto.getDenominacao().trim());
+        imovel.setMunicipio(dto.getMunicipio().trim());
+        imovel.setEstado(dto.getEstado().trim().toUpperCase());
+        imovel.setAreaHectares(dto.getAreaHectares());
+        imovel.setMatricula(textoOuNulo(dto.getMatricula()));
+        imovel.setCartorio(textoOuNulo(dto.getCartorio()));
+        imovel.setCodigoCar(textoOuNulo(dto.getCodigoCar()));
+        imovel.setCodigoCcir(textoOuNulo(dto.getCodigoCcir()));
+        imovel.setNirf(textoOuNulo(dto.getNirf()));
+        imovel.setSituacaoGeorreferenciamento(dto.getSituacaoGeorreferenciamento());
+        imovel.setObservacoes(textoOuNulo(dto.getObservacoes()));
+    }
+
+    // Campos opcionais em branco viram null no banco
+    private String textoOuNulo(String valor) {
+        return (valor == null || valor.isBlank()) ? null : valor.trim();
+    }
+}
