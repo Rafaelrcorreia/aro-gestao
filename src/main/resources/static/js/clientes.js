@@ -132,6 +132,7 @@ function criarCelulaAcoes(cliente) {
         ['Tarefas', function () { window.location.href = 'tarefas.html?clienteId=' + cliente.id; }],
         ['Imóveis', function () { window.location.href = 'imoveis.html?clienteId=' + cliente.id; }],
         ['Processos', function () { window.location.href = 'processos.html?clienteId=' + cliente.id; }],
+        ['Documentos', function () { window.location.href = 'documentos.html?clienteId=' + cliente.id; }],
         ['Editar', function () { abrirModalEdicaoCliente(cliente.id); }],
         ['Excluir', function () { abrirModalExclusao(cliente.id, cliente.nomeCompleto); }]
     ];

@@ -8,6 +8,7 @@ import com.aro.aro_gestao.entity.SituacaoGeorreferenciamento;
 import com.aro.aro_gestao.exception.BusinessException;
 import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,9 @@ class ImovelServiceTest {
 
     @Mock
     private ProcessoRepository processoRepository;
+
+    @Mock
+    private DocumentoRepository documentoRepository;
 
     @InjectMocks
     private ImovelService imovelService;
@@ -175,6 +179,17 @@ class ImovelServiceTest {
         existente.setId(10L);
         when(imovelRepository.findById(10L)).thenReturn(Optional.of(existente));
         when(processoRepository.existsByImovelId(10L)).thenReturn(true);
+
+        assertThrows(BusinessException.class, () -> imovelService.excluir(10L));
+        verify(imovelRepository, never()).delete(any(Imovel.class));
+    }
+
+    @Test
+    void naoDeveExcluirImovelComDocumentos() {
+        Imovel existente = new Imovel();
+        existente.setId(10L);
+        when(imovelRepository.findById(10L)).thenReturn(Optional.of(existente));
+        when(documentoRepository.existsByImovelId(10L)).thenReturn(true);
 
         assertThrows(BusinessException.class, () -> imovelService.excluir(10L));
         verify(imovelRepository, never()).delete(any(Imovel.class));

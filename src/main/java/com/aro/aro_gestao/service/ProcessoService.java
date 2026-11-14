@@ -9,6 +9,7 @@ import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.exception.BusinessException;
 import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,16 @@ public class ProcessoService {
     private final ProcessoRepository processoRepository;
     private final ClienteRepository clienteRepository;
     private final ImovelRepository imovelRepository;
+    private final DocumentoRepository documentoRepository;
 
     public ProcessoService(ProcessoRepository processoRepository,
                            ClienteRepository clienteRepository,
-                           ImovelRepository imovelRepository) {
+                           ImovelRepository imovelRepository,
+                           DocumentoRepository documentoRepository) {
         this.processoRepository = processoRepository;
         this.clienteRepository = clienteRepository;
         this.imovelRepository = imovelRepository;
+        this.documentoRepository = documentoRepository;
     }
 
     @Transactional
@@ -60,13 +64,24 @@ public class ProcessoService {
     @Transactional
     public ProcessoResponseDTO atualizar(Long id, ProcessoRequestDTO dto) {
         Processo processo = buscarProcessoOuFalhar(id);
+        boolean trocouCliente = !processo.getCliente().getId().equals(dto.getClienteId());
+        if (trocouCliente && documentoRepository.existsByProcessoId(id)) {
+            // Os documentos do processo ficariam ligados a outro cliente
+            throw new BusinessException("Nao e possivel trocar o cliente deste processo porque ele possui "
+                    + "documentos vinculados ao cliente atual.");
+        }
         copiarDadosParaEntidade(dto, processo);
         return new ProcessoResponseDTO(processoRepository.save(processo));
     }
 
     @Transactional
     public void excluir(Long id) {
-        processoRepository.delete(buscarProcessoOuFalhar(id));
+        Processo processo = buscarProcessoOuFalhar(id);
+        if (documentoRepository.existsByProcessoId(id)) {
+            throw new BusinessException("Nao e possivel excluir o processo porque ele possui documentos "
+                    + "vinculados. Exclua os documentos ou retire o processo deles antes.");
+        }
+        processoRepository.delete(processo);
     }
 
     private Processo buscarProcessoOuFalhar(Long id) {

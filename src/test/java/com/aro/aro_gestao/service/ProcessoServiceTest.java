@@ -10,6 +10,7 @@ import com.aro.aro_gestao.entity.TipoProcesso;
 import com.aro.aro_gestao.exception.BusinessException;
 import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,9 @@ class ProcessoServiceTest {
 
     @Mock
     private ImovelRepository imovelRepository;
+
+    @Mock
+    private DocumentoRepository documentoRepository;
 
     @InjectMocks
     private ProcessoService processoService;
@@ -176,5 +180,30 @@ class ProcessoServiceTest {
         when(processoRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> processoService.excluir(99L));
+    }
+
+    @Test
+    void naoDeveExcluirProcessoComDocumentos() {
+        Processo processo = new Processo();
+        processo.setId(20L);
+        when(processoRepository.findById(20L)).thenReturn(Optional.of(processo));
+        when(documentoRepository.existsByProcessoId(20L)).thenReturn(true);
+
+        assertThrows(BusinessException.class, () -> processoService.excluir(20L));
+        verify(processoRepository, never()).delete(any(Processo.class));
+    }
+
+    @Test
+    void naoDeveTrocarClienteDeProcessoComDocumentos() {
+        Cliente outro = new Cliente();
+        outro.setId(2L);
+        Processo processo = new Processo();
+        processo.setId(20L);
+        processo.setCliente(outro);
+        when(processoRepository.findById(20L)).thenReturn(Optional.of(processo));
+        when(documentoRepository.existsByProcessoId(20L)).thenReturn(true);
+
+        assertThrows(BusinessException.class, () -> processoService.atualizar(20L, dto));
+        verify(processoRepository, never()).save(any(Processo.class));
     }
 }

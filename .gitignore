@@ -34,3 +34,5 @@ Thumbs.db
 # Dependencias e cache
 .mvn/
 !.mvn/wrapper/maven-wrapper.properties
+# Arquivos enviados pelo sistema (documentos dos clientes)
+uploads/

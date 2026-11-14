@@ -8,6 +8,7 @@ import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
@@ -27,19 +28,22 @@ public class ClienteService {
     private final CompromissoRepository compromissoRepository;
     private final ImovelRepository imovelRepository;
     private final ProcessoRepository processoRepository;
+    private final DocumentoRepository documentoRepository;
 
     public ClienteService(ClienteRepository clienteRepository,
                           AtendimentoRepository atendimentoRepository,
                           TarefaRepository tarefaRepository,
                           CompromissoRepository compromissoRepository,
                           ImovelRepository imovelRepository,
-                          ProcessoRepository processoRepository) {
+                          ProcessoRepository processoRepository,
+                          DocumentoRepository documentoRepository) {
         this.clienteRepository = clienteRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.tarefaRepository = tarefaRepository;
         this.compromissoRepository = compromissoRepository;
         this.imovelRepository = imovelRepository;
         this.processoRepository = processoRepository;
+        this.documentoRepository = documentoRepository;
     }
 
     public ClienteResponseDTO criar(ClienteRequestDTO dto) {
@@ -106,6 +110,9 @@ public class ClienteService {
         }
         if (processoRepository.existsByClienteId(clienteId)) {
             vinculos.add("processos");
+        }
+        if (documentoRepository.existsByClienteId(clienteId)) {
+            vinculos.add("documentos");
         }
         if (!vinculos.isEmpty()) {
             throw new BusinessException("Nao e possivel excluir o cliente porque ele possui "

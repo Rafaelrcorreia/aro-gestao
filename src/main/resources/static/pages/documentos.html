@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentos — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <a href="documentos.html" class="menu-item ativo">
+                <span class="menu-item-texto">Documentos</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Financeiro</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Documentos</h1>
+            <button type="button" id="btnNovoDocumento" class="botao botao-primario">Novo documento</button>
+        </header>
+
+        <section class="barra-ferramentas">
+            <div class="campo-pesquisa">
+                <input type="search" id="inputPesquisa" placeholder="Pesquisar por título, número, arquivo, cliente ou imóvel" aria-label="Pesquisar documentos">
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroCliente">Cliente</label>
+                <select id="selectFiltroCliente">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroTipo">Tipo</label>
+                <select id="selectFiltroTipo">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroValidade">Validade</label>
+                <select id="selectFiltroValidade">
+                    <option value="">Todas</option>
+                    <option value="VENCIDO">Vencidos</option>
+                    <option value="VENCENDO">Vencendo (30 dias)</option>
+                    <option value="VALIDO">Válidos</option>
+                    <option value="SEM_VALIDADE">Sem validade</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando documentos...</span>
+        </div>
+
+        <section class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaDocumentos">
+                <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Cliente / Vínculo</th>
+                    <th>Emissão</th>
+                    <th>Validade</th>
+                    <th>Arquivo</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaDocumentos"></tbody>
+            </table>
+
+            <div id="estadoVazioDocumentos" class="estado-vazio oculto">
+                <p>Nenhum documento encontrado.</p>
+                <p>Clique em "Novo documento" para cadastrar o primeiro.</p>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioDocumento" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Novo documento</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectTipo">Tipo *</label>
+                    <select id="selectTipo" required>
+                        <option value="">Selecione</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroTipo"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputNumero">Número</label>
+                    <input type="text" id="inputNumero" maxlength="60">
+                    <span class="mensagem-erro-campo" id="erroNumero"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputTitulo">Título *</label>
+                <input type="text" id="inputTitulo" maxlength="150" placeholder="Ex.: Certidão de inteiro teor da matrícula 12.345" required>
+                <span class="mensagem-erro-campo" id="erroTitulo"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="selectCliente">Cliente *</label>
+                <select id="selectCliente" required>
+                    <option value="">Selecione</option>
+                </select>
+                <span class="mensagem-erro-campo" id="erroClienteId"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectImovel">Imóvel</label>
+                    <select id="selectImovel">
+                        <option value="">Nenhum</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroImovelId"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectProcesso">Processo</label>
+                    <select id="selectProcesso">
+                        <option value="">Nenhum</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroProcessoId"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataEmissao">Emissão</label>
+                    <input type="date" id="inputDataEmissao">
+                    <span class="mensagem-erro-campo" id="erroDataEmissao"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputDataValidade">Validade</label>
+                    <input type="date" id="inputDataValidade">
+                    <span class="mensagem-erro-campo" id="erroDataValidade"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputArquivo">Arquivo</label>
+                <p id="textoArquivoAtual" class="texto-arquivo-atual oculto"></p>
+                <input type="file" id="inputArquivo"
+                       accept=".pdf,.jpg,.jpeg,.png,.webp,.gif,.doc,.docx,.xls,.xlsx,.odt,.ods,.txt,.csv,.zip,.rar,.7z,.kml,.kmz,.dwg,.dxf,.shp,.dbf,.shx,.prj">
+                <span class="dica-campo">PDF, imagem, Office, planilha, compactado ou arquivo de mapa. Até 20 MB.</span>
+                <span class="mensagem-erro-campo" id="erroArquivo"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaObservacoes">Observações</label>
+                <textarea id="textareaObservacoes" maxlength="1000" rows="3"></textarea>
+                <span class="mensagem-erro-campo" id="erroObservacoes"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarDocumento" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusao" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusao" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusao"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusao" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusao" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/documentos.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

@@ -6,6 +6,7 @@ const URL_BASE_DASHBOARD = '/api/dashboard';
 const URL_BASE_COMPROMISSOS = '/api/compromissos';
 const URL_BASE_IMOVEIS = '/api/imoveis';
 const URL_BASE_PROCESSOS = '/api/processos';
+const URL_BASE_DOCUMENTOS = '/api/documentos';
 
 async function requisitar(url, opcoes) {
     let resposta;
@@ -332,4 +333,66 @@ function excluirProcesso(id) {
     return requisitar(URL_BASE_PROCESSOS + '/' + id, {
         method: 'DELETE'
     });
+}
+
+// Todos os filtros são opcionais
+function listarDocumentos(clienteId, tipo, busca) {
+    const parametros = new URLSearchParams();
+
+    if (clienteId) {
+        parametros.set('clienteId', clienteId);
+    }
+    if (tipo) {
+        parametros.set('tipo', tipo);
+    }
+    if (busca && busca.trim() !== '') {
+        parametros.set('busca', busca.trim());
+    }
+
+    const consulta = parametros.toString();
+    return requisitar(URL_BASE_DOCUMENTOS + (consulta ? '?' + consulta : ''), {
+        method: 'GET'
+    });
+}
+
+function buscarDocumento(id) {
+    return requisitar(URL_BASE_DOCUMENTOS + '/' + id, {
+        method: 'GET'
+    });
+}
+
+// Documentos vão como multipart: "dados" (JSON) + "arquivo" (opcional).
+// Não definimos Content-Type: o navegador monta o cabeçalho com o "boundary" certo.
+function montarEnvioDocumento(dadosDocumento, arquivo) {
+    const envio = new FormData();
+    envio.append('dados', new Blob([JSON.stringify(dadosDocumento)], { type: 'application/json' }));
+    if (arquivo) {
+        envio.append('arquivo', arquivo);
+    }
+    return envio;
+}
+
+function criarDocumento(dadosDocumento, arquivo) {
+    return requisitar(URL_BASE_DOCUMENTOS, {
+        method: 'POST',
+        body: montarEnvioDocumento(dadosDocumento, arquivo)
+    });
+}
+
+function atualizarDocumento(id, dadosDocumento, arquivo) {
+    return requisitar(URL_BASE_DOCUMENTOS + '/' + id, {
+        method: 'PUT',
+        body: montarEnvioDocumento(dadosDocumento, arquivo)
+    });
+}
+
+function excluirDocumento(id) {
+    return requisitar(URL_BASE_DOCUMENTOS + '/' + id, {
+        method: 'DELETE'
+    });
+}
+
+// Endereço para abrir (PDF/imagem) ou baixar o arquivo do documento
+function urlArquivoDocumento(id, baixar) {
+    return URL_BASE_DOCUMENTOS + '/' + id + '/arquivo' + (baixar ? '?download=true' : '');
 }
