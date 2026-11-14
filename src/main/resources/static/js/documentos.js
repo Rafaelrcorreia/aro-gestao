@@ -115,6 +115,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         temporizadorPesquisa = setTimeout(carregarDocumentos, 300);
     });
 
+    const validadeDaUrl = parametrosUrlDocumentos.get('validade');
+    const filtroValidade = elemento('selectFiltroValidade');
+    if (validadeDaUrl && [...filtroValidade.options].some(function (o) { return o.value === validadeDaUrl; })) {
+        filtroValidade.value = validadeDaUrl;
+    }
+
     await carregarClientes();
     carregarDocumentos();
 });

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,10 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     boolean existsByImovelId(Long imovelId);
 
     boolean existsByProcessoId(Long processoId);
+
+    long countByDataValidadeBefore(LocalDate data);
+
+    long countByDataValidadeBetween(LocalDate inicio, LocalDate fim);
 
     @EntityGraph(attributePaths = {"cliente", "imovel", "processo"})
     Optional<Documento> findComVinculosById(Long id);

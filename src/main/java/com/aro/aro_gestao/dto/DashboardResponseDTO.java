@@ -12,6 +12,8 @@ public class DashboardResponseDTO {
     private long tarefasAtrasadas;
     private long processosEmAndamento;
     private long processosAtrasados;
+    private long documentosVencidos;
+    private long documentosVencendo;
     private List<TarefaResponseDTO> proximosPrazos = new ArrayList<>();
     private List<AtendimentoResponseDTO> ultimosAtendimentos = new ArrayList<>();
 
@@ -64,6 +66,22 @@ public class DashboardResponseDTO {
 
     public void setProcessosAtrasados(long processosAtrasados) {
         this.processosAtrasados = processosAtrasados;
+    }
+
+    public long getDocumentosVencidos() {
+        return documentosVencidos;
+    }
+
+    public void setDocumentosVencidos(long documentosVencidos) {
+        this.documentosVencidos = documentosVencidos;
+    }
+
+    public long getDocumentosVencendo() {
+        return documentosVencendo;
+    }
+
+    public void setDocumentosVencendo(long documentosVencendo) {
+        this.documentosVencendo = documentosVencendo;
     }
 
     public List<TarefaResponseDTO> getProximosPrazos() {

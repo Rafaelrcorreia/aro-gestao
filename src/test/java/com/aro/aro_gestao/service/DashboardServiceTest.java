@@ -9,6 +9,7 @@ import com.aro.aro_gestao.entity.StatusTarefa;
 import com.aro.aro_gestao.entity.Tarefa;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ class DashboardServiceTest {
     @Mock
     private ProcessoRepository processoRepository;
 
+    @Mock
+    private DocumentoRepository documentoRepository;
+
     @InjectMocks
     private DashboardService dashboardService;
 
@@ -64,6 +68,14 @@ class DashboardServiceTest {
         when(tarefaRepository.countByStatusNotAndPrazoBefore(
                 eq(StatusTarefa.CONCLUIDA), any(LocalDate.class))).thenReturn(2L);
         when(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS)).thenReturn(5L);
+        when(documentoRepository.countByDataValidadeBefore(any(LocalDate.class))).thenReturn(4L);
+        when(documentoRepository.countByDataValidadeBetween(any(LocalDate.class), any(LocalDate.class)))
+                .thenAnswer(invocacao -> {
+                    LocalDate inicio = invocacao.getArgument(0);
+                    LocalDate fim = invocacao.getArgument(1);
+                    // A janela de aviso precisa ser exatamente de hoje ate hoje + 30 dias
+                    return fim.equals(inicio.plusDays(30)) ? 7L : -1L;
+                });
         when(processoRepository.countByStatusNotInAndPrazoPrevistoBefore(
                 eq(StatusProcesso.FINALIZADOS), any(LocalDate.class))).thenReturn(1L);
 
@@ -76,6 +88,8 @@ class DashboardServiceTest {
         assertEquals(2L, resultado.getTarefasAtrasadas());
         assertEquals(5L, resultado.getProcessosEmAndamento());
         assertEquals(1L, resultado.getProcessosAtrasados());
+        assertEquals(4L, resultado.getDocumentosVencidos());
+        assertEquals(7L, resultado.getDocumentosVencendo());
         assertTrue(!resultado.getDataReferencia().isBefore(antes)
                 && !resultado.getDataReferencia().isAfter(depois));
         verify(tarefaRepository).countByStatusNotAndPrazoBefore(

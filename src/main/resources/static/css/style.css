@@ -481,6 +481,16 @@ label {
     color: var(--vermelho);
 }
 
+/* Atenção, mas ainda não é problema (ex.: documentos perto de vencer) */
+.cartao-indicador.cartao-aviso {
+    border-color: #EBD9A8;
+    background-color: #FDF8EC;
+}
+
+.cartao-indicador.cartao-aviso .cartao-indicador-valor {
+    color: var(--amarelo);
+}
+
 .prazo-proximo {
     color: var(--amarelo);
     font-weight: 600;

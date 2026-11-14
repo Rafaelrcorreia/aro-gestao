@@ -2,12 +2,14 @@ package com.aro.aro_gestao.service;
 
 import com.aro.aro_gestao.dto.AtendimentoResponseDTO;
 import com.aro.aro_gestao.dto.DashboardResponseDTO;
+import com.aro.aro_gestao.dto.DocumentoResponseDTO;
 import com.aro.aro_gestao.dto.TarefaResponseDTO;
 import com.aro.aro_gestao.entity.StatusCliente;
 import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
+import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
@@ -22,15 +24,18 @@ public class DashboardService {
     private final TarefaRepository tarefaRepository;
     private final AtendimentoRepository atendimentoRepository;
     private final ProcessoRepository processoRepository;
+    private final DocumentoRepository documentoRepository;
 
     public DashboardService(ClienteRepository clienteRepository,
                             TarefaRepository tarefaRepository,
                             AtendimentoRepository atendimentoRepository,
-                            ProcessoRepository processoRepository) {
+                            ProcessoRepository processoRepository,
+                            DocumentoRepository documentoRepository) {
         this.clienteRepository = clienteRepository;
         this.tarefaRepository = tarefaRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.processoRepository = processoRepository;
+        this.documentoRepository = documentoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -52,6 +57,12 @@ public class DashboardService {
         resumo.setProcessosEmAndamento(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS));
         resumo.setProcessosAtrasados(processoRepository.countByStatusNotInAndPrazoPrevistoBefore(
                 StatusProcesso.FINALIZADOS, hoje));
+
+        // Mesma regra da lista de documentos: vencido = validade antes de hoje;
+        // vencendo = validade de hoje ate daqui a 30 dias. As duas nunca se sobrepoem.
+        resumo.setDocumentosVencidos(documentoRepository.countByDataValidadeBefore(hoje));
+        resumo.setDocumentosVencendo(documentoRepository.countByDataValidadeBetween(
+                hoje, hoje.plusDays(DocumentoResponseDTO.DIAS_AVISO_VENCIMENTO)));
 
         resumo.setProximosPrazos(tarefaRepository
                 .findTop5ByStatusNotAndPrazoGreaterThanEqualOrderByPrazoAscIdAsc(
