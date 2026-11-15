@@ -54,6 +54,12 @@ function preencherCartoes(resumo) {
     document.getElementById('cartaoDocumentosVencendo')
         .classList.toggle('cartao-aviso', resumo.documentosVencendo > 0);
 
+    const receberEmAtraso = Number(resumo.receberEmAtraso || 0);
+    document.getElementById('valorReceberAtraso').textContent =
+        receberEmAtraso.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    document.getElementById('cartaoReceberAtraso')
+        .classList.toggle('cartao-alerta', receberEmAtraso > 0);
+
     // O cartão de atrasadas fica vermelho só quando existe alguma tarefa atrasada
     document.getElementById('cartaoTarefasAtrasadas')
         .classList.toggle('cartao-alerta', resumo.tarefasAtrasadas > 0);

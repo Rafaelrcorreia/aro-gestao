@@ -1,5 +1,6 @@
 package com.aro.aro_gestao.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ public class DashboardResponseDTO {
     private long processosAtrasados;
     private long documentosVencidos;
     private long documentosVencendo;
+    private BigDecimal receberEmAtraso = BigDecimal.ZERO;
     private List<TarefaResponseDTO> proximosPrazos = new ArrayList<>();
     private List<AtendimentoResponseDTO> ultimosAtendimentos = new ArrayList<>();
 
@@ -82,6 +84,14 @@ public class DashboardResponseDTO {
 
     public void setDocumentosVencendo(long documentosVencendo) {
         this.documentosVencendo = documentosVencendo;
+    }
+
+    public BigDecimal getReceberEmAtraso() {
+        return receberEmAtraso;
+    }
+
+    public void setReceberEmAtraso(BigDecimal receberEmAtraso) {
+        this.receberEmAtraso = receberEmAtraso;
     }
 
     public List<TarefaResponseDTO> getProximosPrazos() {

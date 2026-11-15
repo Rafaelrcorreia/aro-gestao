@@ -6,10 +6,12 @@ import com.aro.aro_gestao.entity.Cliente;
 import com.aro.aro_gestao.entity.StatusCliente;
 import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
+import com.aro.aro_gestao.entity.TipoLancamento;
 import com.aro.aro_gestao.entity.Tarefa;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.DocumentoRepository;
+import com.aro.aro_gestao.repository.LancamentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -46,6 +49,9 @@ class DashboardServiceTest {
     @Mock
     private DocumentoRepository documentoRepository;
 
+    @Mock
+    private LancamentoRepository lancamentoRepository;
+
     @InjectMocks
     private DashboardService dashboardService;
 
@@ -69,6 +75,8 @@ class DashboardServiceTest {
                 eq(StatusTarefa.CONCLUIDA), any(LocalDate.class))).thenReturn(2L);
         when(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS)).thenReturn(5L);
         when(documentoRepository.countByDataValidadeBefore(any(LocalDate.class))).thenReturn(4L);
+        when(lancamentoRepository.somarAtrasados(eq(TipoLancamento.RECEITA), any(LocalDate.class)))
+                .thenReturn(new BigDecimal("1250.75"));
         when(documentoRepository.countByDataValidadeBetween(any(LocalDate.class), any(LocalDate.class)))
                 .thenAnswer(invocacao -> {
                     LocalDate inicio = invocacao.getArgument(0);
@@ -90,6 +98,7 @@ class DashboardServiceTest {
         assertEquals(1L, resultado.getProcessosAtrasados());
         assertEquals(4L, resultado.getDocumentosVencidos());
         assertEquals(7L, resultado.getDocumentosVencendo());
+        assertEquals(new BigDecimal("1250.75"), resultado.getReceberEmAtraso());
         assertTrue(!resultado.getDataReferencia().isBefore(antes)
                 && !resultado.getDataReferencia().isAfter(depois));
         verify(tarefaRepository).countByStatusNotAndPrazoBefore(

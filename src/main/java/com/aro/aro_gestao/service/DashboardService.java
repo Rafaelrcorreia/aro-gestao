@@ -7,9 +7,11 @@ import com.aro.aro_gestao.dto.TarefaResponseDTO;
 import com.aro.aro_gestao.entity.StatusCliente;
 import com.aro.aro_gestao.entity.StatusProcesso;
 import com.aro.aro_gestao.entity.StatusTarefa;
+import com.aro.aro_gestao.entity.TipoLancamento;
 import com.aro.aro_gestao.repository.AtendimentoRepository;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.DocumentoRepository;
+import com.aro.aro_gestao.repository.LancamentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,20 @@ public class DashboardService {
     private final AtendimentoRepository atendimentoRepository;
     private final ProcessoRepository processoRepository;
     private final DocumentoRepository documentoRepository;
+    private final LancamentoRepository lancamentoRepository;
 
     public DashboardService(ClienteRepository clienteRepository,
                             TarefaRepository tarefaRepository,
                             AtendimentoRepository atendimentoRepository,
                             ProcessoRepository processoRepository,
-                            DocumentoRepository documentoRepository) {
+                            DocumentoRepository documentoRepository,
+                            LancamentoRepository lancamentoRepository) {
         this.clienteRepository = clienteRepository;
         this.tarefaRepository = tarefaRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.processoRepository = processoRepository;
         this.documentoRepository = documentoRepository;
+        this.lancamentoRepository = lancamentoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -63,6 +68,9 @@ public class DashboardService {
         resumo.setDocumentosVencidos(documentoRepository.countByDataValidadeBefore(hoje));
         resumo.setDocumentosVencendo(documentoRepository.countByDataValidadeBetween(
                 hoje, hoje.plusDays(DocumentoResponseDTO.DIAS_AVISO_VENCIMENTO)));
+
+        // Receitas ainda nao recebidas com vencimento antes de hoje (de qualquer mes)
+        resumo.setReceberEmAtraso(lancamentoRepository.somarAtrasados(TipoLancamento.RECEITA, hoje));
 
         resumo.setProximosPrazos(tarefaRepository
                 .findTop5ByStatusNotAndPrazoGreaterThanEqualOrderByPrazoAscIdAsc(
