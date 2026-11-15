@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <a href="documentos.html" class="menu-item">
+                <span class="menu-item-texto">Documentos</span>
+            </a>
+            <a href="financeiro.html" class="menu-item ativo">
+                <span class="menu-item-texto">Financeiro</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Financeiro</h1>
+            <div class="acoes-cabecalho">
+                <button type="button" id="btnNovaDespesa" class="botao botao-secundario">Nova despesa</button>
+                <button type="button" id="btnNovaReceita" class="botao botao-primario">Nova receita</button>
+            </div>
+        </header>
+
+        <div class="barra-calendario">
+            <div class="navegacao-calendario">
+                <button type="button" id="btnMesAnterior" class="botao botao-secundario" aria-label="Mês anterior">&larr;</button>
+                <h2 id="tituloMes" class="titulo-mes"></h2>
+                <button type="button" id="btnMesSeguinte" class="botao botao-secundario" aria-label="Mês seguinte">&rarr;</button>
+                <button type="button" id="btnMesAtual" class="botao botao-secundario">Mês atual</button>
+            </div>
+        </div>
+
+        <section class="cartoes-dashboard" aria-label="Resumo do mês">
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Recebido no mês</span>
+                <span id="valorRecebido" class="cartao-indicador-valor valor-receita">—</span>
+            </div>
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Pago no mês</span>
+                <span id="valorPago" class="cartao-indicador-valor valor-despesa">—</span>
+            </div>
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">Saldo do mês</span>
+                <span id="valorSaldo" class="cartao-indicador-valor">—</span>
+            </div>
+            <div class="cartao-indicador">
+                <span class="cartao-indicador-titulo">A receber no mês</span>
+                <span id="valorAReceber" class="cartao-indicador-valor">—</span>
+                <span id="detalheAPagar" class="cartao-indicador-detalhe"></span>
+            </div>
+            <div id="cartaoAtrasado" class="cartao-indicador">
+                <span class="cartao-indicador-titulo">A receber em atraso</span>
+                <span id="valorReceberAtrasado" class="cartao-indicador-valor">—</span>
+                <span id="detalhePagarAtrasado" class="cartao-indicador-detalhe"></span>
+            </div>
+        </section>
+
+        <section class="barra-ferramentas">
+            <div class="campo-pesquisa">
+                <input type="search" id="inputPesquisa" placeholder="Pesquisar por descrição, observação ou cliente" aria-label="Pesquisar lançamentos">
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroTipo">Tipo</label>
+                <select id="selectFiltroTipo">
+                    <option value="">Todos</option>
+                    <option value="RECEITA">Receitas</option>
+                    <option value="DESPESA">Despesas</option>
+                </select>
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroCliente">Cliente</label>
+                <select id="selectFiltroCliente">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="campo-filtro">
+                <label for="selectFiltroSituacao">Situação</label>
+                <select id="selectFiltroSituacao">
+                    <option value="">Todas</option>
+                    <option value="PENDENTE">Em aberto</option>
+                    <option value="ATRASADO">Atrasados</option>
+                    <option value="PAGO">Pagos</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando lançamentos...</span>
+        </div>
+
+        <section class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaLancamentos">
+                <thead>
+                <tr>
+                    <th>Vencimento</th>
+                    <th>Descrição</th>
+                    <th>Cliente / Processo</th>
+                    <th>Valor</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaLancamentos"></tbody>
+            </table>
+
+            <div id="estadoVazioLancamentos" class="estado-vazio oculto">
+                <p>Nenhum lançamento neste mês.</p>
+                <p>Use "Nova receita" ou "Nova despesa" para registrar.</p>
+            </div>
+        </section>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioLancamento" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Nova receita</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectTipo">Tipo *</label>
+                    <select id="selectTipo" required>
+                        <option value="RECEITA">Receita (entrada)</option>
+                        <option value="DESPESA">Despesa (saída)</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroTipo"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectCategoria">Categoria *</label>
+                    <select id="selectCategoria" required>
+                        <option value="">Selecione</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroCategoria"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputDescricao">Descrição *</label>
+                <input type="text" id="inputDescricao" maxlength="150" placeholder="Ex.: Honorários georreferenciamento - 1ª parcela" required>
+                <span class="mensagem-erro-campo" id="erroDescricao"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputValor">Valor (R$) *</label>
+                    <input type="text" id="inputValor" inputmode="decimal" maxlength="16" placeholder="0,00" required>
+                    <span class="mensagem-erro-campo" id="erroValor"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputDataVencimento">Vencimento *</label>
+                    <input type="date" id="inputDataVencimento" required>
+                    <span class="mensagem-erro-campo" id="erroDataVencimento"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectCliente">Cliente</label>
+                    <select id="selectCliente">
+                        <option value="">Nenhum</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroClienteId"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectProcesso">Processo</label>
+                    <select id="selectProcesso">
+                        <option value="">Nenhum</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroProcessoId"></span>
+                </div>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataPagamento" id="rotuloDataPagamento">Recebido em</label>
+                    <input type="date" id="inputDataPagamento">
+                    <span class="dica-campo">Deixe vazio se ainda está em aberto.</span>
+                    <span class="mensagem-erro-campo" id="erroDataPagamento"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectFormaPagamento">Forma de pagamento</label>
+                    <select id="selectFormaPagamento">
+                        <option value="">—</option>
+                    </select>
+                    <span class="mensagem-erro-campo" id="erroFormaPagamento"></span>
+                </div>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="textareaObservacoes">Observações</label>
+                <textarea id="textareaObservacoes" maxlength="1000" rows="3"></textarea>
+                <span class="mensagem-erro-campo" id="erroObservacoes"></span>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarLancamento" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalPagamento" class="modal modal-pequeno">
+    <form id="formularioPagamento" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalPagamento">Registrar recebimento</h2>
+            <button type="button" id="btnFecharModalPagamento" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-corpo">
+            <p id="textoPagamento"></p>
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputDataPagamentoRapido">Data *</label>
+                    <input type="date" id="inputDataPagamentoRapido" required>
+                    <span class="mensagem-erro-campo" id="erroDataPagamentoRapido"></span>
+                </div>
+                <div class="campo-formulario">
+                    <label for="selectFormaPagamentoRapido">Forma</label>
+                    <select id="selectFormaPagamentoRapido">
+                        <option value="">—</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarPagamento" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnConfirmarPagamento" class="botao botao-primario">Confirmar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalConfirmarExclusao" class="modal modal-pequeno">
+    <div class="modal-cabecalho">
+        <h2>Confirmar exclusão</h2>
+        <button type="button" id="btnFecharModalExclusao" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+    </div>
+    <div class="modal-corpo">
+        <p id="textoConfirmarExclusao"></p>
+    </div>
+    <div class="modal-rodape">
+        <button type="button" id="btnCancelarExclusao" class="botao botao-secundario">Cancelar</button>
+        <button type="button" id="btnConfirmarExclusao" class="botao botao-perigo">Excluir</button>
+    </div>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/financeiro.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

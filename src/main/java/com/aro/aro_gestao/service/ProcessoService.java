@@ -11,6 +11,7 @@ import com.aro.aro_gestao.exception.ResourceNotFoundException;
 import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
+import com.aro.aro_gestao.repository.LancamentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,15 +26,18 @@ public class ProcessoService {
     private final ClienteRepository clienteRepository;
     private final ImovelRepository imovelRepository;
     private final DocumentoRepository documentoRepository;
+    private final LancamentoRepository lancamentoRepository;
 
     public ProcessoService(ProcessoRepository processoRepository,
                            ClienteRepository clienteRepository,
                            ImovelRepository imovelRepository,
-                           DocumentoRepository documentoRepository) {
+                           DocumentoRepository documentoRepository,
+                           LancamentoRepository lancamentoRepository) {
         this.processoRepository = processoRepository;
         this.clienteRepository = clienteRepository;
         this.imovelRepository = imovelRepository;
         this.documentoRepository = documentoRepository;
+        this.lancamentoRepository = lancamentoRepository;
     }
 
     @Transactional
@@ -65,10 +69,11 @@ public class ProcessoService {
     public ProcessoResponseDTO atualizar(Long id, ProcessoRequestDTO dto) {
         Processo processo = buscarProcessoOuFalhar(id);
         boolean trocouCliente = !processo.getCliente().getId().equals(dto.getClienteId());
-        if (trocouCliente && documentoRepository.existsByProcessoId(id)) {
-            // Os documentos do processo ficariam ligados a outro cliente
+        if (trocouCliente && (documentoRepository.existsByProcessoId(id)
+                || lancamentoRepository.existsByProcessoId(id))) {
+            // Os documentos/lancamentos do processo ficariam ligados a outro cliente
             throw new BusinessException("Nao e possivel trocar o cliente deste processo porque ele possui "
-                    + "documentos vinculados ao cliente atual.");
+                    + "documentos ou lancamentos financeiros vinculados ao cliente atual.");
         }
         copiarDadosParaEntidade(dto, processo);
         return new ProcessoResponseDTO(processoRepository.save(processo));
@@ -77,9 +82,9 @@ public class ProcessoService {
     @Transactional
     public void excluir(Long id) {
         Processo processo = buscarProcessoOuFalhar(id);
-        if (documentoRepository.existsByProcessoId(id)) {
-            throw new BusinessException("Nao e possivel excluir o processo porque ele possui documentos "
-                    + "vinculados. Exclua os documentos ou retire o processo deles antes.");
+        if (documentoRepository.existsByProcessoId(id) || lancamentoRepository.existsByProcessoId(id)) {
+            throw new BusinessException("Nao e possivel excluir o processo porque ele possui documentos ou "
+                    + "lancamentos financeiros vinculados. Exclua esses registros ou retire o processo deles antes.");
         }
         processoRepository.delete(processo);
     }

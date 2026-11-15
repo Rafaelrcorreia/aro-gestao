@@ -10,6 +10,7 @@ import com.aro.aro_gestao.repository.ClienteRepository;
 import com.aro.aro_gestao.repository.CompromissoRepository;
 import com.aro.aro_gestao.repository.DocumentoRepository;
 import com.aro.aro_gestao.repository.ImovelRepository;
+import com.aro.aro_gestao.repository.LancamentoRepository;
 import com.aro.aro_gestao.repository.ProcessoRepository;
 import com.aro.aro_gestao.repository.TarefaRepository;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class ClienteService {
     private final ImovelRepository imovelRepository;
     private final ProcessoRepository processoRepository;
     private final DocumentoRepository documentoRepository;
+    private final LancamentoRepository lancamentoRepository;
 
     public ClienteService(ClienteRepository clienteRepository,
                           AtendimentoRepository atendimentoRepository,
@@ -36,7 +38,8 @@ public class ClienteService {
                           CompromissoRepository compromissoRepository,
                           ImovelRepository imovelRepository,
                           ProcessoRepository processoRepository,
-                          DocumentoRepository documentoRepository) {
+                          DocumentoRepository documentoRepository,
+                          LancamentoRepository lancamentoRepository) {
         this.clienteRepository = clienteRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.tarefaRepository = tarefaRepository;
@@ -44,6 +47,7 @@ public class ClienteService {
         this.imovelRepository = imovelRepository;
         this.processoRepository = processoRepository;
         this.documentoRepository = documentoRepository;
+        this.lancamentoRepository = lancamentoRepository;
     }
 
     public ClienteResponseDTO criar(ClienteRequestDTO dto) {
@@ -113,6 +117,9 @@ public class ClienteService {
         }
         if (documentoRepository.existsByClienteId(clienteId)) {
             vinculos.add("documentos");
+        }
+        if (lancamentoRepository.existsByClienteId(clienteId)) {
+            vinculos.add("lancamentos financeiros");
         }
         if (!vinculos.isEmpty()) {
             throw new BusinessException("Nao e possivel excluir o cliente porque ele possui "

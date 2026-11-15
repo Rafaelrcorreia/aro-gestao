@@ -7,6 +7,7 @@ const URL_BASE_COMPROMISSOS = '/api/compromissos';
 const URL_BASE_IMOVEIS = '/api/imoveis';
 const URL_BASE_PROCESSOS = '/api/processos';
 const URL_BASE_DOCUMENTOS = '/api/documentos';
+const URL_BASE_LANCAMENTOS = '/api/lancamentos';
 
 async function requisitar(url, opcoes) {
     let resposta;
@@ -388,6 +389,78 @@ function atualizarDocumento(id, dadosDocumento, arquivo) {
 
 function excluirDocumento(id) {
     return requisitar(URL_BASE_DOCUMENTOS + '/' + id, {
+        method: 'DELETE'
+    });
+}
+
+// mes no formato "AAAA-MM" (obrigatório); tipo, clienteId e busca são opcionais
+function listarLancamentos(mes, tipo, clienteId, busca) {
+    const parametros = new URLSearchParams();
+    parametros.set('mes', mes);
+    if (tipo) {
+        parametros.set('tipo', tipo);
+    }
+    if (clienteId) {
+        parametros.set('clienteId', clienteId);
+    }
+    if (busca && busca.trim() !== '') {
+        parametros.set('busca', busca.trim());
+    }
+    return requisitar(URL_BASE_LANCAMENTOS + '?' + parametros.toString(), {
+        method: 'GET'
+    });
+}
+
+function buscarResumoFinanceiro(mes) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/resumo?mes=' + encodeURIComponent(mes), {
+        method: 'GET'
+    });
+}
+
+function buscarLancamento(id) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/' + id, {
+        method: 'GET'
+    });
+}
+
+function criarLancamento(dadosLancamento) {
+    return requisitar(URL_BASE_LANCAMENTOS, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosLancamento)
+    });
+}
+
+function atualizarLancamento(id, dadosLancamento) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosLancamento)
+    });
+}
+
+function registrarPagamentoLancamento(id, dadosPagamento) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/' + id + '/pagamento', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosPagamento)
+    });
+}
+
+function desfazerPagamentoLancamento(id) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/' + id + '/pagamento', {
+        method: 'DELETE'
+    });
+}
+
+function excluirLancamento(id) {
+    return requisitar(URL_BASE_LANCAMENTOS + '/' + id, {
         method: 'DELETE'
     });
 }
