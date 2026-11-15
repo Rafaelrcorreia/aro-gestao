@@ -21,6 +21,8 @@ let anoAtual = agora.getFullYear();
 let mesAtual = agora.getMonth() + 1;
 
 let compromissoEmEdicaoId = null;
+// Destaque de prazo próximo (dias), vindo das Configurações
+let diasAlertaPrazo = 3;
 
 const tituloMes = document.getElementById('tituloMes');
 const gradeCalendario = document.getElementById('gradeCalendario');
@@ -87,7 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
     btnConfirmarExclusaoCompromisso.addEventListener('click', confirmarExclusaoCompromisso);
 
     carregarClientesDoFormulario();
-    carregarMes();
+    obterConfiguracoes().then(function (configuracoes) {
+        diasAlertaPrazo = configuracoes.diasAlertaPrazo;
+        document.getElementById('legendaPrazoProximo').textContent = diasAlertaPrazo === 0
+            ? 'Prazo hoje'
+            : 'Prazo em até ' + diasAlertaPrazo + (diasAlertaPrazo === 1 ? ' dia' : ' dias');
+        carregarMes();
+    });
 });
 
 /* ---------- Mês e grade ---------- */
@@ -284,7 +292,7 @@ function classeDaTarefa(evento, hoje) {
     if (evento.data < hoje) {
         return 'evento-atrasado';
     }
-    if (evento.data <= somarDias(hoje, 3)) {
+    if (evento.data <= somarDias(hoje, diasAlertaPrazo)) {
         return 'evento-proximo';
     }
     return 'evento-tarefa';

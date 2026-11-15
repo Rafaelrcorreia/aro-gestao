@@ -19,6 +19,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -112,5 +113,34 @@ class SegurancaIntegracaoTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("Teste Seguranca"))
                 .andExpect(jsonPath("$.senhaHash").doesNotExist());
+    }
+
+    private static final String CONFIGURACAO_VALIDA =
+            "{\"nomeEmpresa\":\"ARO Teste\",\"diasAvisoDocumentos\":45,\"diasAlertaPrazo\":5}";
+
+    @Test
+    void usuarioComumLeMasNaoAlteraConfiguracoes() throws Exception {
+        mvc.perform(get("/api/configuracoes").with(user("teste.seguranca.integracao").roles("USUARIO")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diasAvisoDocumentos").isNumber());
+        mvc.perform(put("/api/configuracoes").with(user("teste.seguranca.integracao").roles("USUARIO")).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(CONFIGURACAO_VALIDA))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void administradorAlteraConfiguracoesComValidacao() throws Exception {
+        mvc.perform(put("/api/configuracoes").with(user("admin").roles("ADMIN")).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON).content(CONFIGURACAO_VALIDA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.diasAvisoDocumentos").value(45))
+                .andExpect(jsonPath("$.atualizadoPor").value("admin"));
+        mvc.perform(put("/api/configuracoes").with(user("admin").roles("ADMIN")).with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nomeEmpresa\":\"\",\"diasAvisoDocumentos\":0,\"diasAlertaPrazo\":99}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erros.nomeEmpresa").exists())
+                .andExpect(jsonPath("$.erros.diasAvisoDocumentos").exists())
+                .andExpect(jsonPath("$.erros.diasAlertaPrazo").exists());
     }
 }

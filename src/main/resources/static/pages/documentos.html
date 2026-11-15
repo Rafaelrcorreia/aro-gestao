@@ -63,10 +63,9 @@
             <a href="usuarios.html" class="menu-item somente-admin oculto">
                 <span class="menu-item-texto">Usuários</span>
             </a>
-            <span class="menu-item desativado">
-                    <span class="menu-item-texto">Configurações</span>
-                    <span class="menu-item-badge">Em breve</span>
-                </span>
+            <a href="configuracoes.html" class="menu-item">
+                <span class="menu-item-texto">Configurações</span>
+            </a>
         </nav>
     </aside>
 
@@ -97,7 +96,7 @@
                 <select id="selectFiltroValidade">
                     <option value="">Todas</option>
                     <option value="VENCIDO">Vencidos</option>
-                    <option value="VENCENDO">Vencendo (30 dias)</option>
+                    <option value="VENCENDO" id="opcaoFiltroVencendo">Vencendo</option>
                     <option value="VALIDO">Válidos</option>
                     <option value="SEM_VALIDADE">Sem validade</option>
                 </select>

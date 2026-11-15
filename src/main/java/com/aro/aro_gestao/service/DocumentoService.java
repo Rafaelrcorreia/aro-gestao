@@ -30,17 +30,24 @@ public class DocumentoService {
     private final ImovelRepository imovelRepository;
     private final ProcessoRepository processoRepository;
     private final ArmazenamentoDocumentosService armazenamento;
+    private final ConfiguracaoService configuracaoService;
 
     public DocumentoService(DocumentoRepository documentoRepository,
                             ClienteRepository clienteRepository,
                             ImovelRepository imovelRepository,
                             ProcessoRepository processoRepository,
-                            ArmazenamentoDocumentosService armazenamento) {
+                            ArmazenamentoDocumentosService armazenamento,
+                            ConfiguracaoService configuracaoService) {
         this.documentoRepository = documentoRepository;
         this.clienteRepository = clienteRepository;
         this.imovelRepository = imovelRepository;
         this.processoRepository = processoRepository;
         this.armazenamento = armazenamento;
+        this.configuracaoService = configuracaoService;
+    }
+
+    private DocumentoResponseDTO paraResposta(Documento documento) {
+        return new DocumentoResponseDTO(documento, configuracaoService.diasAvisoDocumentos());
     }
 
     /** Dados do arquivo para download/visualizacao. tipoExibivel nulo = forcar download. */
@@ -56,7 +63,7 @@ public class DocumentoService {
 
         ArquivoSalvo novo = salvarArquivoSeEnviado(arquivo, documento);
         try {
-            return new DocumentoResponseDTO(documentoRepository.save(documento));
+            return paraResposta(documentoRepository.save(documento));
         } catch (RuntimeException ex) {
             excluirArquivo(novo);
             throw ex;
@@ -70,15 +77,16 @@ public class DocumentoService {
         }
         String termo = (busca == null || busca.isBlank()) ? null : busca.trim();
 
+        int diasAviso = configuracaoService.diasAvisoDocumentos();
         return documentoRepository.buscar(clienteId, tipo, termo)
                 .stream()
-                .map(DocumentoResponseDTO::new)
+                .map(documento -> new DocumentoResponseDTO(documento, diasAviso))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public DocumentoResponseDTO buscarPorId(Long id) {
-        return new DocumentoResponseDTO(buscarDocumentoOuFalhar(id));
+        return paraResposta(buscarDocumentoOuFalhar(id));
     }
 
     public DocumentoResponseDTO atualizar(Long id, DocumentoRequestDTO dto, MultipartFile arquivo) {
@@ -89,7 +97,7 @@ public class DocumentoService {
         ArquivoSalvo novo = salvarArquivoSeEnviado(arquivo, documento);
         DocumentoResponseDTO resposta;
         try {
-            resposta = new DocumentoResponseDTO(documentoRepository.save(documento));
+            resposta = paraResposta(documentoRepository.save(documento));
         } catch (RuntimeException ex) {
             excluirArquivo(novo);
             throw ex;

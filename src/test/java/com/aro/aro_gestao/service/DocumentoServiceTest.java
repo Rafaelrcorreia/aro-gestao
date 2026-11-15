@@ -54,6 +54,9 @@ class DocumentoServiceTest {
     @Mock
     private ArmazenamentoDocumentosService armazenamento;
 
+    @Mock
+    private ConfiguracaoService configuracaoService;
+
     @InjectMocks
     private DocumentoService documentoService;
 
@@ -75,6 +78,7 @@ class DocumentoServiceTest {
         dto.setDataEmissao(LocalDate.of(2026, 10, 1));
         dto.setDataValidade(LocalDate.of(2026, 10, 31));
 
+        org.mockito.Mockito.lenient().when(configuracaoService.diasAvisoDocumentos()).thenReturn(30);
         pdf = new MockMultipartFile("arquivo", "certidao.pdf", "application/pdf", new byte[]{1, 2, 3});
     }
 
@@ -202,12 +206,19 @@ class DocumentoServiceTest {
     }
 
     @Test
+    void deveRespeitarDiasDeAvisoConfigurados() {
+        LocalDate hoje = LocalDate.of(2026, 11, 14);
+        assertEquals(SituacaoValidade.VALIDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(20), hoje, 15));
+        assertEquals(SituacaoValidade.VENCENDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(20), hoje, 60));
+    }
+
+    @Test
     void deveCalcularSituacaoDaValidade() {
         LocalDate hoje = LocalDate.of(2026, 11, 14);
-        assertEquals(SituacaoValidade.SEM_VALIDADE, DocumentoResponseDTO.calcularSituacao(null, hoje));
-        assertEquals(SituacaoValidade.VENCIDO, DocumentoResponseDTO.calcularSituacao(hoje.minusDays(1), hoje));
-        assertEquals(SituacaoValidade.VENCENDO, DocumentoResponseDTO.calcularSituacao(hoje, hoje));
-        assertEquals(SituacaoValidade.VENCENDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(30), hoje));
-        assertEquals(SituacaoValidade.VALIDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(31), hoje));
+        assertEquals(SituacaoValidade.SEM_VALIDADE, DocumentoResponseDTO.calcularSituacao(null, hoje, 30));
+        assertEquals(SituacaoValidade.VENCIDO, DocumentoResponseDTO.calcularSituacao(hoje.minusDays(1), hoje, 30));
+        assertEquals(SituacaoValidade.VENCENDO, DocumentoResponseDTO.calcularSituacao(hoje, hoje, 30));
+        assertEquals(SituacaoValidade.VENCENDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(30), hoje, 30));
+        assertEquals(SituacaoValidade.VALIDO, DocumentoResponseDTO.calcularSituacao(hoje.plusDays(31), hoje, 30));
     }
 }

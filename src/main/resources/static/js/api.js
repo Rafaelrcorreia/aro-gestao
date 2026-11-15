@@ -605,3 +605,17 @@ function redefinirSenhaUsuario(id, novaSenha) {
         body: JSON.stringify({ novaSenha: novaSenha })
     });
 }
+
+/* ---------- Configurações ---------- */
+
+function buscarConfiguracoes() {
+    return requisitar('/api/configuracoes', { method: 'GET' });
+}
+
+function salvarConfiguracoes(dados) {
+    return requisitar('/api/configuracoes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    });
+}

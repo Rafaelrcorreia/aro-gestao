@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <a href="documentos.html" class="menu-item">
+                <span class="menu-item-texto">Documentos</span>
+            </a>
+            <a href="financeiro.html" class="menu-item">
+                <span class="menu-item-texto">Financeiro</span>
+            </a>
+            <a href="relatorios.html" class="menu-item">
+                <span class="menu-item-texto">Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="menu-item somente-admin oculto">
+                <span class="menu-item-texto">Usuários</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item ativo">
+                <span class="menu-item-texto">Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Configurações</h1>
+        </header>
+
+        <div id="avisoSomenteLeitura" class="aviso-somente-leitura oculto">
+            Somente administradores podem alterar as configurações. Você está vendo os valores atuais.
+        </div>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento">
+            <span class="spinner"></span>
+            <span>Carregando configurações...</span>
+        </div>
+
+        <form id="formularioConfiguracoes" class="formulario-configuracoes oculto" novalidate>
+            <section class="secao-configuracao">
+                <h2>Empresa</h2>
+                <p class="dica-secao">Aparece no cabeçalho dos relatórios impressos.</p>
+
+                <div class="campo-formulario">
+                    <label for="inputNomeEmpresa">Nome da empresa *</label>
+                    <input type="text" id="inputNomeEmpresa" maxlength="150" required>
+                    <span class="mensagem-erro-campo" id="erroNomeEmpresa"></span>
+                </div>
+
+                <div class="grupo-campos">
+                    <div class="campo-formulario">
+                        <label for="inputCnpj">CNPJ</label>
+                        <input type="text" id="inputCnpj" maxlength="20">
+                        <span class="mensagem-erro-campo" id="erroCnpj"></span>
+                    </div>
+                    <div class="campo-formulario">
+                        <label for="inputTelefone">Telefone</label>
+                        <input type="text" id="inputTelefone" maxlength="20">
+                        <span class="mensagem-erro-campo" id="erroTelefone"></span>
+                    </div>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputEmail">E-mail</label>
+                    <input type="email" id="inputEmail" maxlength="150">
+                    <span class="mensagem-erro-campo" id="erroEmail"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="inputEndereco">Endereço</label>
+                    <input type="text" id="inputEndereco" maxlength="200">
+                    <span class="mensagem-erro-campo" id="erroEndereco"></span>
+                </div>
+
+                <div class="grupo-campos">
+                    <div class="campo-formulario">
+                        <label for="inputCidade">Cidade</label>
+                        <input type="text" id="inputCidade" maxlength="100">
+                        <span class="mensagem-erro-campo" id="erroCidade"></span>
+                    </div>
+                    <div class="campo-formulario campo-pequeno">
+                        <label for="inputEstado">Estado</label>
+                        <input type="text" id="inputEstado" maxlength="2" placeholder="UF">
+                        <span class="mensagem-erro-campo" id="erroEstado"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="secao-configuracao">
+                <h2>Alertas</h2>
+
+                <div class="grupo-campos">
+                    <div class="campo-formulario">
+                        <label for="inputDiasAvisoDocumentos">Avisar vencimento de documentos com antecedência de (dias) *</label>
+                        <input type="number" id="inputDiasAvisoDocumentos" min="1" max="365" step="1" required>
+                        <span class="dica-campo">De 1 a 365. Usado em "Vence em breve", no Dashboard e no relatório de vencimentos.</span>
+                        <span class="mensagem-erro-campo" id="erroDiasAvisoDocumentos"></span>
+                    </div>
+                    <div class="campo-formulario">
+                        <label for="inputDiasAlertaPrazo">Destacar prazos de tarefas que vencem em até (dias) *</label>
+                        <input type="number" id="inputDiasAlertaPrazo" min="0" max="60" step="1" required>
+                        <span class="dica-campo">De 0 a 60. Usado no Dashboard e no Calendário. 0 = só o próprio dia.</span>
+                        <span class="mensagem-erro-campo" id="erroDiasAlertaPrazo"></span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="rodape-configuracoes">
+                <span id="textoUltimaAlteracao" class="dica-campo"></span>
+                <button type="submit" id="btnSalvarConfiguracoes" class="botao botao-primario">Salvar configurações</button>
+            </div>
+        </form>
+    </main>
+
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/sessao.js"></script>
+<script src="../js/configuracoes.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

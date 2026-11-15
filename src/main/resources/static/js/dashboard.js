@@ -19,14 +19,20 @@ const rotulosCanalDashboard = {
     EMAIL: 'E-mail'
 };
 
+// Destaque de prazo próximo (dias), vindo das Configurações
+let diasAlertaPrazoDashboard = 3;
+
 document.addEventListener('DOMContentLoaded', carregarDashboard);
 
 function carregarDashboard() {
     const indicadorCarregamento = document.getElementById('indicadorCarregamento');
     indicadorCarregamento.classList.remove('oculto');
 
-    buscarDashboard()
-        .then(function (resumo) {
+    Promise.all([buscarDashboard(), obterConfiguracoes()])
+        .then(function ([resumo, configuracoes]) {
+            diasAlertaPrazoDashboard = configuracoes.diasAlertaPrazo;
+            document.getElementById('tituloDocumentosVencendo').textContent =
+                'Documentos vencendo (' + configuracoes.diasAvisoDocumentos + ' dias)';
             preencherCartoes(resumo);
             preencherProximosPrazos(resumo.proximosPrazos || [], resumo.dataReferencia);
             preencherUltimosAtendimentos(resumo.ultimosAtendimentos || []);
@@ -82,7 +88,7 @@ function preencherProximosPrazos(tarefas, dataReferencia) {
         const linha = document.createElement('tr');
 
         const celulaPrazo = criarCelulaDashboard('Prazo', formatarDataDashboard(tarefa.prazo));
-        if (diasEntreDatas(dataReferencia, tarefa.prazo) <= 3) {
+        if (diasEntreDatas(dataReferencia, tarefa.prazo) <= diasAlertaPrazoDashboard) {
             celulaPrazo.classList.add('prazo-proximo');
         }
         linha.appendChild(celulaPrazo);

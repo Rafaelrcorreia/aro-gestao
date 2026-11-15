@@ -59,6 +59,9 @@ class RelatorioServiceTest {
     @Mock
     private ImovelRepository imovelRepository;
 
+    @Mock
+    private ConfiguracaoService configuracaoService;
+
     @InjectMocks
     private RelatorioService relatorioService;
 
@@ -168,6 +171,7 @@ class RelatorioServiceTest {
     @Test
     void deveListarDocumentosVencidosEVencendo() {
         LocalDate hoje = LocalDate.now();
+        when(configuracaoService.diasAvisoDocumentos()).thenReturn(30);
         Documento vencido = documento(hoje.minusDays(3));
         Documento vencendo = documento(hoje.plusDays(10));
         when(documentoRepository.findByDataValidadeLessThanEqualOrderByDataValidadeAscIdAsc(hoje.plusDays(30)))

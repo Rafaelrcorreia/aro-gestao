@@ -52,6 +52,9 @@ class DashboardServiceTest {
     @Mock
     private LancamentoRepository lancamentoRepository;
 
+    @Mock
+    private ConfiguracaoService configuracaoService;
+
     @InjectMocks
     private DashboardService dashboardService;
 
@@ -74,6 +77,7 @@ class DashboardServiceTest {
         when(tarefaRepository.countByStatusNotAndPrazoBefore(
                 eq(StatusTarefa.CONCLUIDA), any(LocalDate.class))).thenReturn(2L);
         when(processoRepository.countByStatusNotIn(StatusProcesso.FINALIZADOS)).thenReturn(5L);
+        when(configuracaoService.diasAvisoDocumentos()).thenReturn(45);
         when(documentoRepository.countByDataValidadeBefore(any(LocalDate.class))).thenReturn(4L);
         when(lancamentoRepository.somarAtrasados(eq(TipoLancamento.RECEITA), any(LocalDate.class)))
                 .thenReturn(new BigDecimal("1250.75"));
@@ -81,8 +85,8 @@ class DashboardServiceTest {
                 .thenAnswer(invocacao -> {
                     LocalDate inicio = invocacao.getArgument(0);
                     LocalDate fim = invocacao.getArgument(1);
-                    // A janela de aviso precisa ser exatamente de hoje ate hoje + 30 dias
-                    return fim.equals(inicio.plusDays(30)) ? 7L : -1L;
+                    // A janela de aviso precisa ser exatamente de hoje ate hoje + dias configurados
+                    return fim.equals(inicio.plusDays(45)) ? 7L : -1L;
                 });
         when(processoRepository.countByStatusNotInAndPrazoPrevistoBefore(
                 eq(StatusProcesso.FINALIZADOS), any(LocalDate.class))).thenReturn(1L);

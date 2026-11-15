@@ -63,9 +63,36 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     aplicarPeriodo('mes');
-    const daUrl = new URLSearchParams(window.location.search).get('r');
-    escolherRelatorio(relatorios[daUrl] ? daUrl : 'financeiro');
+    obterConfiguracoes().then(function (configuracoes) {
+        preencherCabecalhoEmpresa(configuracoes);
+        selecionarDiasPadrao(configuracoes.diasAvisoDocumentos);
+        const daUrl = new URLSearchParams(window.location.search).get('r');
+        escolherRelatorio(relatorios[daUrl] ? daUrl : 'financeiro');
+    });
 });
+
+// O relatório de documentos começa com os dias de aviso das Configurações
+function selecionarDiasPadrao(dias) {
+    const select = elemento('selectDias');
+    if (![...select.options].some(function (o) { return o.value === String(dias); })) {
+        const opcao = document.createElement('option');
+        opcao.value = String(dias);
+        opcao.textContent = dias + ' dias';
+        const depois = [...select.options].find(function (o) { return Number(o.value) > dias; });
+        select.insertBefore(opcao, depois || null);
+    }
+    select.value = String(dias);
+}
+
+// Cabeçalho que só aparece na impressão: nome da empresa e contatos
+function preencherCabecalhoEmpresa(configuracoes) {
+    elemento('nomeEmpresaImpressao').textContent = configuracoes.nomeEmpresa;
+    const cidadeUf = [configuracoes.cidade, configuracoes.estado].filter(Boolean).join('/');
+    elemento('detalhesEmpresaImpressao').textContent = [
+        configuracoes.cnpj ? 'CNPJ ' + configuracoes.cnpj : null,
+        configuracoes.telefone, configuracoes.email, configuracoes.endereco, cidadeUf
+    ].filter(Boolean).join(' · ');
+}
 
 function escolherRelatorio(nome) {
     relatorioAtual = nome;
@@ -89,6 +116,8 @@ async function gerarRelatorioAtual() {
     const versao = ++versaoGeracao;
     const relatorio = relatorios[relatorioAtual];
     elemento('tituloRelatorio').textContent = relatorio.titulo;
+    elemento('dataEmissaoImpressao').textContent = 'Emitido em ' + new Date().toLocaleString('pt-BR',
+        { dateStyle: 'short', timeStyle: 'short' });
     elemento('subtituloRelatorio').textContent = '';
     elemento('corpoRelatorio').replaceChildren();
     dadosCsv = null;

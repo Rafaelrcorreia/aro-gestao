@@ -79,6 +79,9 @@ function elemento(id) {
 
 document.addEventListener('DOMContentLoaded', async function () {
     preencherTipos();
+    obterConfiguracoes().then(function (configuracoes) {
+        elemento('opcaoFiltroVencendo').textContent = 'Vencendo (' + configuracoes.diasAvisoDocumentos + ' dias)';
+    });
 
     elemento('modalFormulario').addEventListener('close', function () {
         elemento('formularioDocumento').reset();

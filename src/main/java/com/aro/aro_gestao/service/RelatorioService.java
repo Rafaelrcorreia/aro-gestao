@@ -50,17 +50,20 @@ public class RelatorioService {
     private final DocumentoRepository documentoRepository;
     private final ClienteRepository clienteRepository;
     private final ImovelRepository imovelRepository;
+    private final ConfiguracaoService configuracaoService;
 
     public RelatorioService(LancamentoRepository lancamentoRepository,
                             ProcessoRepository processoRepository,
                             DocumentoRepository documentoRepository,
                             ClienteRepository clienteRepository,
-                            ImovelRepository imovelRepository) {
+                            ImovelRepository imovelRepository,
+                            ConfiguracaoService configuracaoService) {
         this.lancamentoRepository = lancamentoRepository;
         this.processoRepository = processoRepository;
         this.documentoRepository = documentoRepository;
         this.clienteRepository = clienteRepository;
         this.imovelRepository = imovelRepository;
+        this.configuracaoService = configuracaoService;
     }
 
     /* ---------- Financeiro ---------- */
@@ -169,7 +172,8 @@ public class RelatorioService {
     /* ---------- Documentos ---------- */
 
     public RelatorioDocumentos documentos(Integer dias) {
-        int janela = dias == null ? DocumentoResponseDTO.DIAS_AVISO_VENCIMENTO : dias;
+        int diasAviso = configuracaoService.diasAvisoDocumentos();
+        int janela = dias == null ? diasAviso : dias;
         if (janela < 0 || janela > 365) {
             throw new BusinessException("Informe de 0 a 365 dias.");
         }
@@ -178,7 +182,7 @@ public class RelatorioService {
 
         List<DocumentoResponseDTO> documentos = documentoRepository
                 .findByDataValidadeLessThanEqualOrderByDataValidadeAscIdAsc(limite)
-                .stream().map(DocumentoResponseDTO::new).toList();
+                .stream().map(documento -> new DocumentoResponseDTO(documento, diasAviso)).toList();
         long vencidos = documentos.stream().filter(d -> d.getDataValidade().isBefore(hoje)).count();
 
         return new RelatorioDocumentos(hoje, janela, limite, vencidos, documentos.size() - vencidos, documentos);

@@ -2,7 +2,6 @@ package com.aro.aro_gestao.service;
 
 import com.aro.aro_gestao.dto.AtendimentoResponseDTO;
 import com.aro.aro_gestao.dto.DashboardResponseDTO;
-import com.aro.aro_gestao.dto.DocumentoResponseDTO;
 import com.aro.aro_gestao.dto.TarefaResponseDTO;
 import com.aro.aro_gestao.entity.StatusCliente;
 import com.aro.aro_gestao.entity.StatusProcesso;
@@ -28,19 +27,22 @@ public class DashboardService {
     private final ProcessoRepository processoRepository;
     private final DocumentoRepository documentoRepository;
     private final LancamentoRepository lancamentoRepository;
+    private final ConfiguracaoService configuracaoService;
 
     public DashboardService(ClienteRepository clienteRepository,
                             TarefaRepository tarefaRepository,
                             AtendimentoRepository atendimentoRepository,
                             ProcessoRepository processoRepository,
                             DocumentoRepository documentoRepository,
-                            LancamentoRepository lancamentoRepository) {
+                            LancamentoRepository lancamentoRepository,
+                            ConfiguracaoService configuracaoService) {
         this.clienteRepository = clienteRepository;
         this.tarefaRepository = tarefaRepository;
         this.atendimentoRepository = atendimentoRepository;
         this.processoRepository = processoRepository;
         this.documentoRepository = documentoRepository;
         this.lancamentoRepository = lancamentoRepository;
+        this.configuracaoService = configuracaoService;
     }
 
     @Transactional(readOnly = true)
@@ -64,10 +66,10 @@ public class DashboardService {
                 StatusProcesso.FINALIZADOS, hoje));
 
         // Mesma regra da lista de documentos: vencido = validade antes de hoje;
-        // vencendo = validade de hoje ate daqui a 30 dias. As duas nunca se sobrepoem.
+        // vencendo = validade de hoje ate daqui a N dias (N nas Configuracoes). As duas nunca se sobrepoem.
         resumo.setDocumentosVencidos(documentoRepository.countByDataValidadeBefore(hoje));
         resumo.setDocumentosVencendo(documentoRepository.countByDataValidadeBetween(
-                hoje, hoje.plusDays(DocumentoResponseDTO.DIAS_AVISO_VENCIMENTO)));
+                hoje, hoje.plusDays(configuracaoService.diasAvisoDocumentos())));
 
         // Receitas ainda nao recebidas com vencimento antes de hoje (de qualquer mes)
         resumo.setReceberEmAtraso(lancamentoRepository.somarAtrasados(TipoLancamento.RECEITA, hoje));

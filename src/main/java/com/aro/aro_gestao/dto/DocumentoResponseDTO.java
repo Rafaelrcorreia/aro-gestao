@@ -9,9 +9,6 @@ import java.time.LocalDate;
 
 public class DocumentoResponseDTO {
 
-    // Quantos dias antes do vencimento o documento passa a ser "vencendo"
-    public static final int DIAS_AVISO_VENCIMENTO = 30;
-
     public enum SituacaoValidade {
         SEM_VALIDADE,
         VALIDO,
@@ -38,7 +35,8 @@ public class DocumentoResponseDTO {
     private final String arquivoNome;
     private final Long arquivoTamanho;
 
-    public DocumentoResponseDTO(Documento documento) {
+    // diasAviso: quantos dias antes do vencimento o documento passa a ser "vencendo" (Configuracoes)
+    public DocumentoResponseDTO(Documento documento, int diasAviso) {
         this.id = documento.getId();
         this.clienteId = documento.getCliente().getId();
         this.nomeCliente = documento.getCliente().getNomeCompleto();
@@ -56,7 +54,7 @@ public class DocumentoResponseDTO {
         this.numero = documento.getNumero();
         this.dataEmissao = documento.getDataEmissao();
         this.dataValidade = documento.getDataValidade();
-        this.situacaoValidade = calcularSituacao(documento.getDataValidade(), LocalDate.now());
+        this.situacaoValidade = calcularSituacao(documento.getDataValidade(), LocalDate.now(), diasAviso);
         this.observacoes = documento.getObservacoes();
         this.dataCadastro = documento.getDataCadastro();
         this.possuiArquivo = documento.getArquivoNomeArmazenado() != null;
@@ -64,14 +62,14 @@ public class DocumentoResponseDTO {
         this.arquivoTamanho = documento.getArquivoTamanho();
     }
 
-    public static SituacaoValidade calcularSituacao(LocalDate validade, LocalDate hoje) {
+    public static SituacaoValidade calcularSituacao(LocalDate validade, LocalDate hoje, int diasAviso) {
         if (validade == null) {
             return SituacaoValidade.SEM_VALIDADE;
         }
         if (validade.isBefore(hoje)) {
             return SituacaoValidade.VENCIDO;
         }
-        if (!validade.isAfter(hoje.plusDays(DIAS_AVISO_VENCIMENTO))) {
+        if (!validade.isAfter(hoje.plusDays(diasAviso))) {
             return SituacaoValidade.VENCENDO;
         }
         return SituacaoValidade.VALIDO;

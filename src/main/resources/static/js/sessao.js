@@ -4,6 +4,20 @@
 
 let usuarioLogado = null;
 
+// Valores usados enquanto a configuração não chega (ou se a consulta falhar)
+const CONFIGURACOES_PADRAO = { nomeEmpresa: 'ARO Assessoria', diasAvisoDocumentos: 30, diasAlertaPrazo: 3 };
+let promessaConfiguracoes = null;
+
+// As telas chamam obterConfiguracoes() para saber, por exemplo, quantos dias de aviso usar
+function obterConfiguracoes() {
+    if (!promessaConfiguracoes) {
+        promessaConfiguracoes = buscarConfiguracoes()
+            .then(function (configuracoes) { return Object.assign({}, CONFIGURACOES_PADRAO, configuracoes); })
+            .catch(function () { return Object.assign({}, CONFIGURACOES_PADRAO); });
+    }
+    return promessaConfiguracoes;
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         usuarioLogado = await buscarUsuarioLogado();
