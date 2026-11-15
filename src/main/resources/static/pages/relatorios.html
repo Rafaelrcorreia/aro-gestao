@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <a href="documentos.html" class="menu-item">
+                <span class="menu-item-texto">Documentos</span>
+            </a>
+            <a href="financeiro.html" class="menu-item">
+                <span class="menu-item-texto">Financeiro</span>
+            </a>
+            <a href="relatorios.html" class="menu-item ativo">
+                <span class="menu-item-texto">Relatórios</span>
+            </a>
+            <a href="usuarios.html" class="menu-item somente-admin oculto">
+                <span class="menu-item-texto">Usuários</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Relatórios</h1>
+            <div class="acoes-cabecalho nao-imprimir">
+                <button type="button" id="btnExportarCsv" class="botao botao-secundario">Exportar CSV</button>
+                <button type="button" id="btnImprimir" class="botao botao-primario">Imprimir / PDF</button>
+            </div>
+        </header>
+
+        <nav class="abas-relatorio nao-imprimir" role="tablist" aria-label="Tipo de relatório">
+            <button type="button" class="aba-relatorio" role="tab" data-relatorio="financeiro">Financeiro</button>
+            <button type="button" class="aba-relatorio" role="tab" data-relatorio="processos">Processos</button>
+            <button type="button" class="aba-relatorio" role="tab" data-relatorio="documentos">Vencimento de documentos</button>
+            <button type="button" class="aba-relatorio" role="tab" data-relatorio="clientes">Carteira de clientes</button>
+        </nav>
+
+        <!-- Filtros de cada relatório -->
+        <section id="filtrosFinanceiro" class="barra-ferramentas filtros-relatorio nao-imprimir oculto">
+            <div class="campo-filtro">
+                <label for="inputInicio">De</label>
+                <input type="date" id="inputInicio">
+            </div>
+            <div class="campo-filtro">
+                <label for="inputFim">Até</label>
+                <input type="date" id="inputFim">
+            </div>
+            <div class="atalhos-periodo">
+                <button type="button" class="botao-icone" data-periodo="mes">Este mês</button>
+                <button type="button" class="botao-icone" data-periodo="mes-anterior">Mês anterior</button>
+                <button type="button" class="botao-icone" data-periodo="ano">Este ano</button>
+            </div>
+            <button type="button" id="btnGerarFinanceiro" class="botao botao-primario">Gerar</button>
+        </section>
+
+        <section id="filtrosDocumentos" class="barra-ferramentas filtros-relatorio nao-imprimir oculto">
+            <div class="campo-filtro">
+                <label for="selectDias">Vencidos e que vencem em até</label>
+                <select id="selectDias">
+                    <option value="0">hoje</option>
+                    <option value="15">15 dias</option>
+                    <option value="30" selected>30 dias</option>
+                    <option value="60">60 dias</option>
+                    <option value="90">90 dias</option>
+                    <option value="180">180 dias</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Gerando relatório...</span>
+        </div>
+
+        <!-- Conteúdo gerado pelo relatorios.js -->
+        <article id="conteudoRelatorio" class="conteudo-relatorio">
+            <h2 id="tituloRelatorio" class="titulo-relatorio"></h2>
+            <p id="subtituloRelatorio" class="subtitulo-relatorio"></p>
+            <div id="corpoRelatorio"></div>
+        </article>
+    </main>
+
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/sessao.js"></script>
+<script src="../js/relatorios.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

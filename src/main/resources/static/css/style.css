@@ -904,3 +904,125 @@ label {
 .cartao-login .mensagem-erro-login {
     margin-bottom: 0;
 }
+
+/* Relatórios */
+.abas-relatorio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--cinza-borda);
+}
+
+.aba-relatorio {
+    padding: 10px 14px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: #5F6B65;
+    cursor: pointer;
+}
+
+.aba-relatorio:hover {
+    color: var(--texto-escuro);
+}
+
+.aba-relatorio.ativa {
+    color: var(--verde-escuro);
+    border-bottom-color: var(--verde-principal);
+}
+
+.filtros-relatorio {
+    align-items: flex-end;
+}
+
+.atalhos-periodo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.conteudo-relatorio {
+    background-color: var(--branco);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.titulo-relatorio {
+    margin: 0;
+}
+
+.subtitulo-relatorio {
+    margin: 4px 0 16px;
+    color: #5F6B65;
+    font-size: 14px;
+}
+
+.secao-relatorio {
+    margin-top: 24px;
+}
+
+.secao-relatorio h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+.texto-vazio-relatorio {
+    color: #5F6B65;
+    font-size: 14px;
+}
+
+.tabela-relatorio .numero {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tabela-relatorio tr.linha-destaque td {
+    background-color: #FBF1EF;
+}
+
+@media print {
+    .menu-lateral,
+    .botao-abrir-menu,
+    .sobreposicao-menu,
+    .container-mensagens,
+    .nao-imprimir,
+    .indicador-carregamento {
+        display: none !important;
+    }
+
+    body {
+        background: #FFFFFF;
+    }
+
+    .app-layout,
+    .conteudo-principal {
+        display: block;
+        padding: 0;
+        margin: 0;
+    }
+
+    .conteudo-relatorio {
+        border: none;
+        padding: 0;
+    }
+
+    .area-tabela {
+        overflow: visible;
+    }
+
+    .tabela-relatorio {
+        font-size: 11px;
+    }
+
+    .tabela-relatorio tr {
+        break-inside: avoid;
+    }
+
+    .cartao-indicador {
+        border: 1px solid #CCCCCC;
+    }
+}

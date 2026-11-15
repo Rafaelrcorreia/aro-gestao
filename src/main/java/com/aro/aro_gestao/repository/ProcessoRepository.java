@@ -28,6 +28,18 @@ public interface ProcessoRepository extends JpaRepository<Processo, Long> {
 
     long countByStatusNotInAndPrazoPrevistoBefore(Collection<StatusProcesso> status, LocalDate data);
 
+    @EntityGraph(attributePaths = {"cliente", "imovel"})
+    @Query("SELECT p FROM Processo p")
+    List<Processo> buscarTodosComVinculos();
+
+    // Relatorio de clientes: [clienteId, quantidade] de processos ainda em andamento
+    @Query("""
+            SELECT p.cliente.id, COUNT(p) FROM Processo p
+            WHERE p.status NOT IN :finalizados
+            GROUP BY p.cliente.id
+            """)
+    List<Object[]> contarEmAndamentoPorCliente(@Param("finalizados") Collection<StatusProcesso> finalizados);
+
     // Todos os filtros sao opcionais: quando vierem nulos, sao ignorados.
     // Mais recentes primeiro.
     @EntityGraph(attributePaths = {"cliente", "imovel"})

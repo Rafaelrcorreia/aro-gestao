@@ -26,6 +26,18 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     @EntityGraph(attributePaths = {"cliente", "imovel", "processo"})
     Optional<Documento> findComVinculosById(Long id);
 
+    // Relatorio de vencimentos: documentos com validade ate a data limite (inclui os ja vencidos)
+    @EntityGraph(attributePaths = {"cliente", "imovel", "processo"})
+    List<Documento> findByDataValidadeLessThanEqualOrderByDataValidadeAscIdAsc(LocalDate limite);
+
+    // Relatorio de clientes: [clienteId, quantidade] de documentos vencidos
+    @Query("""
+            SELECT d.cliente.id, COUNT(d) FROM Documento d
+            WHERE d.dataValidade < :hoje
+            GROUP BY d.cliente.id
+            """)
+    List<Object[]> contarVencidosPorCliente(@Param("hoje") LocalDate hoje);
+
     // Todos os filtros sao opcionais: quando vierem nulos, sao ignorados.
     @EntityGraph(attributePaths = {"cliente", "imovel", "processo"})
     @Query("""

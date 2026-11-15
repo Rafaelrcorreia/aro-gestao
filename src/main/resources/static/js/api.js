@@ -520,6 +520,26 @@ function urlArquivoDocumento(id, baixar) {
     return URL_BASE_DOCUMENTOS + '/' + id + '/arquivo' + (baixar ? '?download=true' : '');
 }
 
+/* ---------- Relatórios ---------- */
+
+// inicio e fim no formato "AAAA-MM-DD"
+function buscarRelatorioFinanceiro(inicio, fim) {
+    return requisitar('/api/relatorios/financeiro?inicio=' + encodeURIComponent(inicio)
+        + '&fim=' + encodeURIComponent(fim), { method: 'GET' });
+}
+
+function buscarRelatorioProcessos() {
+    return requisitar('/api/relatorios/processos', { method: 'GET' });
+}
+
+function buscarRelatorioDocumentos(dias) {
+    return requisitar('/api/relatorios/documentos?dias=' + encodeURIComponent(dias), { method: 'GET' });
+}
+
+function buscarRelatorioClientes() {
+    return requisitar('/api/relatorios/clientes', { method: 'GET' });
+}
+
 /* ---------- Login, sessão e usuários ---------- */
 
 function buscarStatusAutenticacao() {

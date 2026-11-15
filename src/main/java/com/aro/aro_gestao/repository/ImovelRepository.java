@@ -12,6 +12,10 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
 
     boolean existsByClienteId(Long clienteId);
 
+    // Relatorio de clientes: [clienteId, quantidade de imoveis]
+    @Query("SELECT i.cliente.id, COUNT(i) FROM Imovel i GROUP BY i.cliente.id")
+    List<Object[]> contarPorCliente();
+
     // clienteId e busca sao opcionais: quando vierem nulos, o filtro correspondente e ignorado
     @EntityGraph(attributePaths = "cliente")
     @Query("""

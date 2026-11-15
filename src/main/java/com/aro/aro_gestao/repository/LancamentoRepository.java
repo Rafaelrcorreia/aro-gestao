@@ -44,6 +44,24 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
                                      @Param("clienteId") Long clienteId,
                                      @Param("busca") String busca);
 
+    // Relatorio financeiro: tudo que foi pago/recebido no periodo
+    @EntityGraph(attributePaths = {"cliente", "processo"})
+    @Query("""
+            SELECT l FROM Lancamento l
+            WHERE l.dataPagamento BETWEEN :inicio AND :fim
+            ORDER BY l.dataPagamento ASC, l.id ASC
+            """)
+    List<Lancamento> buscarPagosNoPeriodo(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    // Relatorio de clientes: [clienteId, total] das receitas vencidas e nao recebidas
+    @Query("""
+            SELECT l.cliente.id, SUM(l.valor) FROM Lancamento l
+            WHERE l.tipo = com.aro.aro_gestao.entity.TipoLancamento.RECEITA
+              AND l.dataPagamento IS NULL AND l.dataVencimento < :hoje AND l.cliente IS NOT NULL
+            GROUP BY l.cliente.id
+            """)
+    List<Object[]> somarReceberEmAtrasoPorCliente(@Param("hoje") LocalDate hoje);
+
     // Total efetivamente pago/recebido no periodo
     @Query("""
             SELECT COALESCE(SUM(l.valor), 0) FROM Lancamento l
