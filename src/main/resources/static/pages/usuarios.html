@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários — ARO Gestão</title>
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<button id="btnAbrirMenu" class="botao-abrir-menu" aria-label="Abrir menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sobreposicaoMenu" class="sobreposicao-menu"></div>
+
+<div id="containerMensagens" class="container-mensagens" aria-live="polite"></div>
+
+<div class="app-layout">
+
+    <aside id="menuLateral" class="menu-lateral">
+        <div class="menu-topo">
+            <span class="menu-logo">ARO</span>
+            <span class="menu-titulo">Gestão</span>
+        </div>
+
+        <nav class="menu-nav" aria-label="Menu principal">
+            <a href="../index.html" class="menu-item">
+                <span class="menu-item-texto">Dashboard</span>
+            </a>
+            <a href="clientes.html" class="menu-item">
+                <span class="menu-item-texto">Clientes</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Atendimentos</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Tarefas</span>
+                    <span class="menu-item-badge">Pelo cliente</span>
+                </span>
+            <a href="calendario.html" class="menu-item">
+                <span class="menu-item-texto">Calendário</span>
+            </a>
+            <a href="imoveis.html" class="menu-item">
+                <span class="menu-item-texto">Imóveis</span>
+            </a>
+            <a href="processos.html" class="menu-item">
+                <span class="menu-item-texto">Processos</span>
+            </a>
+            <a href="documentos.html" class="menu-item">
+                <span class="menu-item-texto">Documentos</span>
+            </a>
+            <a href="financeiro.html" class="menu-item">
+                <span class="menu-item-texto">Financeiro</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Relatórios</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+            <a href="usuarios.html" class="menu-item ativo somente-admin oculto">
+                <span class="menu-item-texto">Usuários</span>
+            </a>
+            <span class="menu-item desativado">
+                    <span class="menu-item-texto">Configurações</span>
+                    <span class="menu-item-badge">Em breve</span>
+                </span>
+        </nav>
+    </aside>
+
+    <main class="conteudo-principal">
+        <header class="cabecalho-pagina">
+            <h1>Usuários</h1>
+            <button type="button" id="btnNovoUsuario" class="botao botao-primario">Novo usuário</button>
+        </header>
+
+        <div id="avisoSemPermissao" class="estado-vazio oculto">
+            <p>Somente administradores podem gerenciar usuários.</p>
+        </div>
+
+        <div id="indicadorCarregamento" class="indicador-carregamento oculto">
+            <span class="spinner"></span>
+            <span>Carregando usuários...</span>
+        </div>
+
+        <section id="areaUsuarios" class="area-tabela">
+            <table class="tabela-responsiva" id="tabelaUsuarios">
+                <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Login</th>
+                    <th>Papel</th>
+                    <th>Situação</th>
+                    <th>Cadastro</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="corpoTabelaUsuarios"></tbody>
+            </table>
+        </section>
+    </main>
+
+</div>
+
+<dialog id="modalFormulario" class="modal">
+    <form id="formularioUsuario" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2 id="tituloModalFormulario">Novo usuário</h2>
+            <button type="button" id="btnFecharModalFormulario" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div class="modal-corpo">
+            <div class="campo-formulario">
+                <label for="inputNome">Nome *</label>
+                <input type="text" id="inputNome" maxlength="100" required>
+                <span class="mensagem-erro-campo" id="erroNome"></span>
+            </div>
+
+            <div class="campo-formulario">
+                <label for="inputLogin">Login *</label>
+                <input type="text" id="inputLogin" maxlength="50" autocomplete="off" autocapitalize="none" spellcheck="false" required>
+                <span class="dica-campo">De 3 a 50 caracteres: letras, números, ponto, hífen, sublinhado ou @.</span>
+                <span class="mensagem-erro-campo" id="erroLogin"></span>
+            </div>
+
+            <div class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="selectPapel">Papel *</label>
+                    <select id="selectPapel" required>
+                        <option value="USUARIO">Usuário</option>
+                        <option value="ADMIN">Administrador</option>
+                    </select>
+                    <span class="dica-campo">Administradores também gerenciam usuários.</span>
+                    <span class="mensagem-erro-campo" id="erroPapel"></span>
+                </div>
+
+                <div class="campo-formulario">
+                    <label for="selectAtivo">Situação *</label>
+                    <select id="selectAtivo">
+                        <option value="true">Ativo</option>
+                        <option value="false">Desativado</option>
+                    </select>
+                    <span class="dica-campo">Usuário desativado não consegue entrar.</span>
+                    <span class="mensagem-erro-campo" id="erroAtivo"></span>
+                </div>
+            </div>
+
+            <div id="grupoSenhaInicial" class="grupo-campos">
+                <div class="campo-formulario">
+                    <label for="inputSenha">Senha inicial *</label>
+                    <input type="password" id="inputSenha" maxlength="100" autocomplete="new-password">
+                    <span class="dica-campo">Pelo menos 8 caracteres. Passe para a pessoa trocar depois.</span>
+                    <span class="mensagem-erro-campo" id="erroSenha"></span>
+                </div>
+                <div class="campo-formulario">
+                    <label for="inputConfirmarSenha">Confirmar senha *</label>
+                    <input type="password" id="inputConfirmarSenha" maxlength="100" autocomplete="new-password">
+                    <span class="mensagem-erro-campo" id="erroConfirmarSenha"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarFormulario" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnSalvarUsuario" class="botao botao-primario">Salvar</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="modalRedefinirSenha" class="modal modal-pequeno">
+    <form id="formularioRedefinirSenha" method="dialog" novalidate>
+        <div class="modal-cabecalho">
+            <h2>Redefinir senha</h2>
+            <button type="button" id="btnFecharModalRedefinir" class="botao-fechar-modal" aria-label="Fechar">&times;</button>
+        </div>
+        <div class="modal-corpo">
+            <p id="textoRedefinirSenha"></p>
+            <div class="campo-formulario">
+                <label for="inputNovaSenhaUsuario">Nova senha *</label>
+                <input type="password" id="inputNovaSenhaUsuario" maxlength="100" autocomplete="new-password">
+                <span class="mensagem-erro-campo" id="erroNovaSenhaUsuario"></span>
+            </div>
+            <div class="campo-formulario">
+                <label for="inputConfirmarNovaSenhaUsuario">Confirmar nova senha *</label>
+                <input type="password" id="inputConfirmarNovaSenhaUsuario" maxlength="100" autocomplete="new-password">
+                <span class="mensagem-erro-campo" id="erroConfirmarNovaSenhaUsuario"></span>
+            </div>
+        </div>
+        <div class="modal-rodape">
+            <button type="button" id="btnCancelarRedefinir" class="botao botao-secundario">Cancelar</button>
+            <button type="submit" id="btnConfirmarRedefinir" class="botao botao-primario">Redefinir</button>
+        </div>
+    </form>
+</dialog>
+
+<script src="../js/api.js"></script>
+<script src="../js/sessao.js"></script>
+<script src="../js/usuarios.js"></script>
+
+<script>
+    const btnAbrirMenu = document.getElementById('btnAbrirMenu');
+    const menuLateral = document.getElementById('menuLateral');
+    const sobreposicaoMenu = document.getElementById('sobreposicaoMenu');
+
+    function alternarMenu() {
+        const aberto = menuLateral.classList.toggle('aberto');
+        sobreposicaoMenu.classList.toggle('visivel', aberto);
+        btnAbrirMenu.setAttribute('aria-expanded', String(aberto));
+    }
+
+    btnAbrirMenu.addEventListener('click', alternarMenu);
+    sobreposicaoMenu.addEventListener('click', alternarMenu);
+</script>
+
+</body>
+</html>

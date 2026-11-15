@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar — ARO Gestão</title>
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="pagina-login">
+
+<main class="cartao-login">
+    <div class="login-marca">
+        <span class="login-logo">ARO</span>
+        <span class="login-titulo">Gestão</span>
+    </div>
+
+    <div id="indicadorCarregamento" class="indicador-carregamento">
+        <span class="spinner"></span>
+        <span>Carregando...</span>
+    </div>
+
+    <!-- Login normal -->
+    <form id="formularioLogin" class="oculto" novalidate>
+        <h1>Entrar</h1>
+        <div class="campo-formulario">
+            <label for="inputLogin">Login</label>
+            <input type="text" id="inputLogin" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+        </div>
+        <div class="campo-formulario">
+            <label for="inputSenha">Senha</label>
+            <input type="password" id="inputSenha" autocomplete="current-password" required>
+        </div>
+        <p id="erroLogin" class="mensagem-erro-login" role="alert"></p>
+        <button type="submit" id="btnEntrar" class="botao botao-primario botao-largo">Entrar</button>
+    </form>
+
+    <!-- Primeiro acesso: aparece só enquanto o sistema não tem nenhum usuário -->
+    <form id="formularioPrimeiroAcesso" class="oculto" novalidate>
+        <h1>Primeiro acesso</h1>
+        <p class="texto-ajuda-login">Ainda não há usuários. Crie o administrador do sistema; depois ele poderá cadastrar as demais pessoas.</p>
+        <div class="campo-formulario">
+            <label for="inputNomeAdmin">Seu nome</label>
+            <input type="text" id="inputNomeAdmin" maxlength="100" autocomplete="name" required>
+            <span class="mensagem-erro-campo" id="erroNome"></span>
+        </div>
+        <div class="campo-formulario">
+            <label for="inputLoginAdmin">Login</label>
+            <input type="text" id="inputLoginAdmin" maxlength="50" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+            <span class="dica-campo">De 3 a 50 caracteres: letras, números, ponto, hífen, sublinhado ou @.</span>
+            <span class="mensagem-erro-campo" id="erroLoginAdmin"></span>
+        </div>
+        <div class="campo-formulario">
+            <label for="inputSenhaAdmin">Senha</label>
+            <input type="password" id="inputSenhaAdmin" maxlength="100" autocomplete="new-password" required>
+            <span class="dica-campo">Pelo menos 8 caracteres.</span>
+            <span class="mensagem-erro-campo" id="erroSenhaAdmin"></span>
+        </div>
+        <div class="campo-formulario">
+            <label for="inputConfirmarSenhaAdmin">Confirmar senha</label>
+            <input type="password" id="inputConfirmarSenhaAdmin" maxlength="100" autocomplete="new-password" required>
+            <span class="mensagem-erro-campo" id="erroConfirmarSenhaAdmin"></span>
+        </div>
+        <p id="erroPrimeiroAcesso" class="mensagem-erro-login" role="alert"></p>
+        <button type="submit" id="btnCriarAdmin" class="botao botao-primario botao-largo">Criar administrador e entrar</button>
+    </form>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

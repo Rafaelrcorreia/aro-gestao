@@ -8,17 +8,67 @@ const URL_BASE_IMOVEIS = '/api/imoveis';
 const URL_BASE_PROCESSOS = '/api/processos';
 const URL_BASE_DOCUMENTOS = '/api/documentos';
 const URL_BASE_LANCAMENTOS = '/api/lancamentos';
+const URL_BASE_AUTH = '/api/auth';
+const URL_BASE_USUARIOS = '/api/usuarios';
+
+const METODOS_SEM_CSRF = ['GET', 'HEAD', 'OPTIONS'];
+
+function lerCookie(nome) {
+    const item = document.cookie.split('; ').find(function (par) { return par.startsWith(nome + '='); });
+    return item ? decodeURIComponent(item.slice(nome.length + 1)) : null;
+}
+
+// O servidor guarda o token CSRF no cookie XSRF-TOKEN; toda alteração (POST, PUT, PATCH, DELETE)
+// precisa devolvê-lo no cabeçalho X-XSRF-TOKEN. Se o cookie ainda não existe, pedimos um.
+async function obterTokenCsrf() {
+    let token = lerCookie('XSRF-TOKEN');
+    if (!token) {
+        try {
+            await fetch(URL_BASE_AUTH + '/status');
+        } catch (erro) {
+            // sem conexão: a requisição principal vai mostrar o erro
+        }
+        token = lerCookie('XSRF-TOKEN');
+    }
+    return token;
+}
+
+function estaNaPaginaDeLogin() {
+    return window.location.pathname.endsWith('/login.html');
+}
+
+// Sessão expirada ou inexistente: volta para o login e, depois de entrar, retorna para cá
+function irParaLogin() {
+    const voltar = window.location.pathname + window.location.search;
+    window.location.href = '/login.html?voltar=' + encodeURIComponent(voltar);
+}
 
 async function requisitar(url, opcoes) {
     let resposta;
+    const configuracao = Object.assign({}, opcoes || {});
+    const metodo = (configuracao.method || 'GET').toUpperCase();
+
+    if (!METODOS_SEM_CSRF.includes(metodo)) {
+        const token = await obterTokenCsrf();
+        configuracao.headers = Object.assign({}, configuracao.headers || {});
+        if (token) {
+            configuracao.headers['X-XSRF-TOKEN'] = token;
+        }
+    }
 
     try {
-        resposta = await fetch(url, opcoes);
+        resposta = await fetch(url, configuracao);
     } catch (erroDeRede) {
         throw {
             tipo: 'CONEXAO',
             mensagem: 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
         };
+    }
+
+    if (resposta.status === 401 && !estaNaPaginaDeLogin()) {
+        irParaLogin();
+        // Não resolve: a página está sendo trocada pela de login
+        return new Promise(function () {});
     }
 
     if (resposta.status === 204) {
@@ -468,4 +518,70 @@ function excluirLancamento(id) {
 // Endereço para abrir (PDF/imagem) ou baixar o arquivo do documento
 function urlArquivoDocumento(id, baixar) {
     return URL_BASE_DOCUMENTOS + '/' + id + '/arquivo' + (baixar ? '?download=true' : '');
+}
+
+/* ---------- Login, sessão e usuários ---------- */
+
+function buscarStatusAutenticacao() {
+    return requisitar(URL_BASE_AUTH + '/status', { method: 'GET' });
+}
+
+function buscarUsuarioLogado() {
+    return requisitar(URL_BASE_AUTH + '/me', { method: 'GET' });
+}
+
+// O login vai como formulário (login e senha), que é o formato que o Spring Security espera
+function entrar(login, senha) {
+    const corpo = new URLSearchParams();
+    corpo.set('login', login);
+    corpo.set('senha', senha);
+    return requisitar(URL_BASE_AUTH + '/login', { method: 'POST', body: corpo });
+}
+
+function sair() {
+    return requisitar(URL_BASE_AUTH + '/logout', { method: 'POST' });
+}
+
+function criarPrimeiroAdministrador(dados) {
+    return requisitar(URL_BASE_AUTH + '/primeiro-acesso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    });
+}
+
+function alterarMinhaSenha(senhaAtual, novaSenha) {
+    return requisitar(URL_BASE_AUTH + '/senha', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senhaAtual: senhaAtual, novaSenha: novaSenha })
+    });
+}
+
+function listarUsuarios() {
+    return requisitar(URL_BASE_USUARIOS, { method: 'GET' });
+}
+
+function criarUsuario(dados) {
+    return requisitar(URL_BASE_USUARIOS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    });
+}
+
+function atualizarUsuario(id, dados) {
+    return requisitar(URL_BASE_USUARIOS + '/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    });
+}
+
+function redefinirSenhaUsuario(id, novaSenha) {
+    return requisitar(URL_BASE_USUARIOS + '/' + id + '/senha', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ novaSenha: novaSenha })
+    });
 }
